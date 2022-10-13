@@ -5,7 +5,7 @@ from typing import Optional
 
 from discord.ext import commands
 
-import tabul
+from tabulate import tabulate
 
 def get_deadlines() -> list[dict]:
     """retrieve deadlines from file, returned as json"""
@@ -98,8 +98,7 @@ def format_all_deadlines_to_string(dealines: list[dict]) -> str:
 
         deadline_matrix.append(deadline_list)
 
-    return "```" + tabul.tabulate([["deadline name", "due on", "due in", "progress"]], 
-                                    deadline_matrix) + "```"
+    return "```" + tabulate(deadline_matrix, headers=["deadline name", "due on", "due in", "progress"]) + "```"
 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
