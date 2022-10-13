@@ -7,9 +7,9 @@ from discord.ext import commands
 
 import tabul
 
-def get_deadlines() -> list[dict[str, str]]:
+def get_deadlines() -> list[dict]:
     """retrieve deadlines from file, returned as json"""
-    with open("deadlines.json", "r", encoding="utf-8") as file:
+    with open("data/deadlines.json", "r", encoding="utf-8") as file:
         return json.loads(file.read())
 
 def format_datetime_to_string(date: datetime.datetime) -> str:
@@ -39,19 +39,20 @@ def make_deadline_time(date: Optional[datetime.datetime], time: str="") -> Optio
         return date
     return None
 
-def calculate_remaining_time(date: Optional[datetime.datetime]):
+def calculate_remaining_time(date: Optional[datetime.datetime]) -> Optional[datetime.datetime]:
     """calculate the remaining time"""
     if date:
         return date - datetime.datetime.now()
     return None
 
-def remaining_time_str(time: datetime.datetime):
+def remaining_time_str(time: Optional[datetime.datetime]) -> str:
     """convert the reamining time to a string"""
     if time:
         return str(time)[:-10]
     return "tbc"
 
-def calculate_progress(start, end):
+def calculate_progress(start: Optional[datetime.datetime], end: Optional[datetime.datetime]) -> Optional[float]:
+    """calculate current position in deadline"""
     if start and end:
         start_now = datetime.datetime.now() - start
         print(start_now)
@@ -61,7 +62,8 @@ def calculate_progress(start, end):
         return percent
     return None
 
-def format_progress(percent):
+def format_progress(percent: Optional[float]) -> str:
+    """Turn a percentage to text to be displayed"""
     if not percent:
         return "x"
     if percent < 0:
@@ -74,7 +76,7 @@ def format_progress(percent):
 
 
 
-def format_all_deadlines_to_string(dealines) -> str:
+def format_all_deadlines_to_string(dealines: list[dict]) -> str:
     deadline_matrix = []
     for deadline in dealines:
         course: str = deadline["subject"]
@@ -100,7 +102,7 @@ def format_all_deadlines_to_string(dealines) -> str:
                                     deadline_matrix) + "```"
 
 
-class DeadlineCog(commands.Cog, name='Example'):
+class DeadlineCog(commands.Cog, name='Deadlines'):
     """Deadline cog"""
 
     @commands.command()

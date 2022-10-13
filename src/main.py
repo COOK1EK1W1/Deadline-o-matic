@@ -1,4 +1,4 @@
-"""basic discord bot"""
+"""Deadline discord bot"""
 
 from discord.ext import commands
 import discord
