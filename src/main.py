@@ -3,7 +3,7 @@
 from discord.ext import commands
 import discord
 import os
-from deadline_cog import get_deadlines, make_deadline_time, parse_iso_date
+from deadline_cog import get_deadlines, format_time_delta, get_due_datetime
 import asyncio
 import datetime
 
@@ -31,32 +31,17 @@ async def on_ready():
 
     ###announcement scheduling
     async def announce_deadline(deadline, announce_before):
-        due_date = parse_iso_date(deadline['due date'])
-        due_time = deadline['due time']
-        deadline_at = make_deadline_time(due_date, due_time)
+        deadline_at = get_due_datetime(deadline)
         announce_at = deadline_at - announce_before
 
-            
         time_until_announce = (announce_at - datetime.datetime.now()).total_seconds()
         if time_until_announce < 0:
             return
 
-        ##make strings of how long left
-        days = ""
-        if announce_before.days > 0:
-            days = str(announce_before.days) + " days"
-        hours = ""
-        if announce_before.seconds // 3600 > 0:
-            hours = " " + str((announce_before.seconds // 3600) % 24) + " hours"
-        minutes = ""
-        if announce_before.seconds // 60 > 0:
-            minutes = " " +str((announce_before.seconds // 60) % 60) + " minutes"
-
-
         print("adding announcement for " + deadline['name'] + " scheduled at " + str(announce_at))
         await asyncio.sleep(time_until_announce) #sleep until it has to send the announcement
         channel = bot.get_channel(int(ANNOUNCE_CHANNEL))
-        await channel.send(deadline['name'] + " is due in" + days + hours + minutes)
+        await channel.send(deadline['name'] + " is due in" + format_time_delta(time_until_announce))
 
 
     loop = asyncio.get_event_loop()

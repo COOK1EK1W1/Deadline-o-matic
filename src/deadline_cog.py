@@ -72,6 +72,27 @@ def format_progress(percent: Optional[float]) -> str:
         return "#" * int(24 * percent) + "-" * int(24 - 24 * percent)
 
 
+def format_time_delta(delta: datetime.timedelta) -> str:
+    """format a delta time into 'x days y hours z minutes'"""
+    ##make strings of how long left
+    days = ""
+    if delta.days > 0:
+        days = str(delta.days) + " days"
+    hours = ""
+    if delta.seconds // 3600 > 0:
+        hours = " " + str((delta.seconds // 3600) % 24) + " hours"
+    minutes = ""
+    if delta.seconds // 60 > 0:
+        minutes = " " +str((delta.seconds // 60) % 60) + " minutes"
+
+    return days + hours + minutes
+
+
+def get_due_datetime(deadline: dict) -> Optional[datetime.datetime]:
+    """get the datetime from the deadline json format"""
+    due_date = parse_iso_date(deadline['due date'])
+    due_time = deadline['due time']
+    return make_deadline_time(due_date, due_time)
 
 
 def format_all_deadlines_to_string(dealines: list[dict]) -> str:
@@ -82,9 +103,7 @@ def format_all_deadlines_to_string(dealines: list[dict]) -> str:
 
         set_date = parse_iso_date(deadline["start date"])
 
-        due_date = parse_iso_date(deadline["due date"])
-        due_date = make_deadline_time(due_date, deadline["due time"])
-
+        due_date = get_due_datetime(deadline)
 
         remaining_time = calculate_remaining_time(due_date)
 
