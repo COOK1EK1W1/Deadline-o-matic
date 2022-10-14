@@ -11,11 +11,10 @@ from deadline_cog import DeadlineCog
 
 #environment variables
 TOKEN = os.getenv("DISCORD_TOKEN")
+if not TOKEN:
+    raise Exception("No discord token provided")
 
-ANNOUNCE_CHANNEL = int(os.getenv("ANNOUNCE_CHANNEL"))
-if not ANNOUNCE_CHANNEL:
-    ANNOUNCE_CHANNEL = 1026157932984934400 #default channel
-
+ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
 
 bot = commands.Bot(command_prefix=["."])
 
@@ -25,6 +24,10 @@ async def on_ready():
     print(f'We have logged in as {bot.user}')
     print("")
     await bot.change_presence(status=discord.Status.online)
+
+    if not ANNOUNCE_CHANNEL:
+        print("no announcement channel, anouncements disabled")
+        return
 
     ###announcement scheduling
     async def announce_deadline(deadline, announce_before):
@@ -50,9 +53,9 @@ async def on_ready():
             minutes = " " +str((announce_before.seconds // 60) % 60) + " minutes"
 
 
-        print("adding announcement scheduled at " + str(announce_at))
+        print("adding announcement for " + deadline['name'] + " scheduled at " + str(announce_at))
         await asyncio.sleep(time_until_announce) #sleep until it has to send the announcement
-        channel = bot.get_channel(ANNOUNCE_CHANNEL)
+        channel = bot.get_channel(int(ANNOUNCE_CHANNEL))
         await channel.send(deadline['name'] + " is due in" + days + hours + minutes)
 
 
