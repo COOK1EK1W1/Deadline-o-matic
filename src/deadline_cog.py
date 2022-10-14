@@ -55,9 +55,7 @@ def calculate_progress(start: Optional[datetime.datetime], end: Optional[datetim
     """calculate current position in deadline"""
     if start and end:
         start_now = datetime.datetime.now() - start
-        print(start_now)
         start_end:datetime.timedelta = end - start
-        print(start_end)
         percent = start_now / start_end
         return percent
     return None
