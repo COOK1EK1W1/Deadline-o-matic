@@ -2,5 +2,6 @@
     {"name":"CW2 - EXPO", "subject":"F28ED", "start date" : "2022-11-02", "due date" : "2022-11-09", "start time":"00:00", "due time":"23:59"},
     {"name":"CW1 Python", "subject":"F28PL", "start date" : "2022-10-08", "due date" : "2022-10-26", "start time":"00:00", "due time":"15:30"},
     {"name":"Lab 4 Queues & doubly linked lists", "subject":"F28SG", "start date" : "2022-10-07", "due date" : "2022-10-28", "start time":"00:00", "due time":"15:30"},
-    {"name":"Lab 5: Search", "subject":"F28SG", "start date" : "2022-10-14", "due date" : "2022-11-04", "start time":"00:00", "due time":"15:30"}
+    {"name":"Lab 5: Search", "subject":"F28SG", "start date" : "2022-10-14", "due date" : "2022-11-04", "start time":"00:00", "due time":"15:30"},
+    {"name":"Announcement test", "subject":"your mum", "start date" : "2022-10-17", "due date" : "2022-10-18", "start time":"00:00", "due time":"23:30"}
 ]

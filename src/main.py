@@ -30,18 +30,19 @@ async def on_ready():
         return
 
     ###announcement scheduling
-    async def announce_deadline(deadline, announce_before):
+    async def announce_deadline(deadline, announce_before: datetime.timedelta):
         deadline_at = get_due_datetime(deadline)
         announce_at = deadline_at - announce_before
 
-        time_until_announce = (announce_at - datetime.datetime.now()).total_seconds()
-        if time_until_announce < 0:
+        seconds_until_announce = (announce_at - datetime.datetime.now()).total_seconds()
+
+        if seconds_until_announce < 0:
             return
 
         print("adding announcement for " + deadline['name'] + " scheduled at " + str(announce_at))
-        await asyncio.sleep(time_until_announce) #sleep until it has to send the announcement
+        await asyncio.sleep(seconds_until_announce) #sleep until it has to send the announcement
         channel = bot.get_channel(int(ANNOUNCE_CHANNEL))
-        await channel.send(deadline['name'] + " is due in" + format_time_delta(time_until_announce))
+        await channel.send(deadline['name'] + " is due in" + format_time_delta(announce_before))
 
 
     loop = asyncio.get_event_loop()
