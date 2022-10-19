@@ -6,6 +6,7 @@ import os
 from deadline_cog import get_deadlines, format_time_delta, get_due_datetime
 import asyncio
 import datetime
+import pytz
 
 from deadline_cog import DeadlineCog
 
@@ -34,7 +35,7 @@ async def on_ready():
         deadline_at = get_due_datetime(deadline)
         announce_at = deadline_at - announce_before
 
-        seconds_until_announce = (announce_at - datetime.datetime.now()).total_seconds()
+        seconds_until_announce = (announce_at - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds()
 
         if seconds_until_announce < 0:
             return

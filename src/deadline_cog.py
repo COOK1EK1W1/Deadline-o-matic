@@ -2,6 +2,7 @@
 import json
 import datetime
 from typing import Optional
+import pytz
 
 from discord.ext import commands
 
@@ -19,7 +20,8 @@ def format_datetime_to_string(date: datetime.datetime) -> str:
 def parse_iso_date(date_str: str) -> Optional[datetime.datetime]:
     """if date is not empty create new datetime.datetime instance"""
     if date_str:
-        return datetime.datetime.fromisoformat(date_str)
+        timezone = pytz.timezone("europe/london")
+        return timezone.localize(datetime.datetime.fromisoformat(date_str))
     return None
 
 def datetime_to_str(date: Optional[datetime.datetime]) -> str:
@@ -42,7 +44,7 @@ def make_deadline_time(date: Optional[datetime.datetime], time: str="") -> Optio
 def calculate_remaining_time(date: Optional[datetime.datetime]) -> Optional[datetime.datetime]:
     """calculate the remaining time"""
     if date:
-        return date - datetime.datetime.now()
+        return date - pytz.utc.localize(datetime.datetime.utcnow())
     return None
 
 def remaining_time_str(time: Optional[datetime.datetime]) -> str:
@@ -54,7 +56,7 @@ def remaining_time_str(time: Optional[datetime.datetime]) -> str:
 def calculate_progress(start: Optional[datetime.datetime], end: Optional[datetime.datetime]) -> Optional[float]:
     """calculate current position in deadline"""
     if start and end:
-        start_now = datetime.datetime.now() - start
+        start_now = pytz.utc.localize(datetime.datetime.utcnow()) - start
         start_end:datetime.timedelta = end - start
         percent = start_now / start_end
         return percent

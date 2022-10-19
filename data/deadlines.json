@@ -4,6 +4,5 @@
     {"name":"Lab 4 Queues & doubly linked lists", "subject":"F28SG", "start date" : "2022-10-07", "due date" : "2022-10-28", "start time":"00:00", "due time":"15:30"},
     {"name":"Lab 5: Search", "subject":"F28SG", "start date" : "2022-10-14", "due date" : "2022-11-04", "start time":"00:00", "due time":"15:30"},
     {"name":"Interm test", "subject":"F28ED", "start date" : "2022-10-17", "due date" : "2022-10-24", "start time":"00:01", "due time":"23:00"},
-    {"name":"yet another test but not one we need to study for- don't worry", "subject":"F28ED", "start date" : "2022-10-18", "due date" : "2022-10-20", "start time":"00:01", "due time":"15:00"},
-    {"name":"Test", "subject":"F28SG", "start date" : "2022-10-19", "due date" : "2022-10-20", "start time":"00:00", "due time":"15:30"}
+    {"name":"Test", "subject":"F28SG", "start date" : "2022-10-19", "due date" : "2022-10-19", "start time":"00:00", "due time":"23:59"}
 ]
