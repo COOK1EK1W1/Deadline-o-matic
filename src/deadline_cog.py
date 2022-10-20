@@ -67,7 +67,7 @@ def format_progress(percent: Optional[float]) -> str:
     if not percent:
         return "x"
     if percent < 0:
-        return "------ not started -----"
+        return "----- not started -----"
     elif percent > 1:
         return "####### finished #######"
     else :
@@ -117,7 +117,7 @@ def format_all_deadlines_to_string(dealines: list[dict]) -> str:
 
         deadline_matrix.append(deadline_list)
 
-    return "```" + tabulate(deadline_matrix, headers=["deadline name", "due on", "due in", "progress"]) + "```"
+    return "```" + tabulate(deadline_matrix, headers=["deadline name", "due on", "due in", "progress"], maxcolwidths=[20, None, None, None]) + "```"
 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
