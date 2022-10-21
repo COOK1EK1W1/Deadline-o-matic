@@ -114,11 +114,11 @@ def format_all_deadlines_to_string(deadlines: list[dict]) -> str:
 
 
 
-        deadline_list = [name, datetime_to_str(due_date), remaining_time_str(remaining_time), format_progress(progress)]
+        deadline_list = [name, course, datetime_to_str(due_date), remaining_time_str(remaining_time), format_progress(progress)]
 
         deadline_matrix.append(deadline_list)
 
-    return "```" + tabulate(deadline_matrix, headers=["deadline name", "due on", "due in", "progress"], maxcolwidths=[20, None, None, None]) + "```"
+    return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "due on", "due in", "progress"], maxcolwidths=[20, None, None, None]) + "```"
 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
