@@ -97,9 +97,10 @@ def get_due_datetime(deadline: dict) -> Optional[datetime.datetime]:
     return make_deadline_time(due_date, due_time)
 
 
-def format_all_deadlines_to_string(dealines: list[dict]) -> str:
+def format_all_deadlines_to_string(deadlines: list[dict]) -> str:
     deadline_matrix = []
-    for deadline in dealines:
+    deadlines.sort(key=lambda x: (get_due_datetime(x) - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds())
+    for deadline in deadlines:
         course: str = deadline["subject"]
         name: str = deadline["name"]
 
