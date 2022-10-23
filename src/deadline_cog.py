@@ -2,6 +2,7 @@
 import json
 import datetime
 from typing import Optional
+import discord
 import pytz
 
 from discord.ext import commands
@@ -97,6 +98,19 @@ def get_due_datetime(deadline: dict) -> Optional[datetime.datetime]:
     return make_deadline_time(due_date, due_time)
 
 
+def format_deadlines_for_embed(deadlines: list[dict]) -> discord.Embed:
+    """format deadlines for an embed post in discord"""
+    deadlines.sort(key=lambda x: (get_due_datetime(x) - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds())
+
+    embed = discord.Embed(title="All Deadlines", color=0xeb0000)
+    for deadline in deadlines:
+        due_date = get_due_datetime(deadline)
+        set_date = parse_iso_date(deadline["start date"])
+        
+        a = int(due_date.timestamp())
+        embed.add_field(name=f"{deadline['name']} ~ {deadline['subject']}", value=str("<t:" + str(a) + ":F>"), inline=False)
+    return embed
+
 def format_all_deadlines_to_string(deadlines: list[dict]) -> str:
     deadline_matrix = []
     deadlines.sort(key=lambda x: (get_due_datetime(x) - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds())
@@ -128,4 +142,4 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def all(self, ctx, *_):
         """template command"""
         deadlines = get_deadlines()
-        await ctx.send(format_all_deadlines_to_string(deadlines))
+        await ctx.send(embed=format_deadlines_for_embed(deadlines))
