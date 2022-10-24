@@ -9,5 +9,5 @@
     {"name":"Week 7 test", "subject":"F28WP", "start date" : "2022-10-28", "due date" : "2022-10-28", "start time":"16:00", "due time":"17:00"},
     {"name":"Week 9 test", "subject":"F28WP", "start date" : "2022-11-11", "due date" : "2022-11-11", "start time":"16:00", "due time":"17:00"},
     {"name":"Week 11 test", "subject":"F28WP", "start date" : "2022-11-25", "due date" : "2022-11-25", "start time":"16:00", "due time":"17:00"},
-    {"name":"Interm test", "subject":"F28ED", "start date" : "2022-10-24", "due date" : "2022-10-24", "start time":"00:01", "due time":"23:00"},
+    {"name":"Interm test", "subject":"F28ED", "start date" : "2022-10-24", "due date" : "2022-10-24", "start time":"00:01", "due time":"23:00"}
 ]
