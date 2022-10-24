@@ -97,23 +97,40 @@ def get_due_datetime(deadline: dict) -> Optional[datetime.datetime]:
     due_time = deadline['due time']
     return make_deadline_time(due_date, due_time)
 
+def get_start_datetime(deadline: dict) -> Optional[datetime.datetime]:
+    """get the datetime from the deadline json format"""
+    due_date = parse_iso_date(deadline['start date'])
+    due_time = deadline['start time']
+    return make_deadline_time(due_date, due_time)
+
+
+def sort_by_due(deadlines: list, reverse=False):
+    deadlines.sort(key=lambda x: (get_due_datetime(x) - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds(), reverse=reverse)
+    return deadlines
+
 
 def format_deadlines_for_embed(deadlines: list[dict]) -> discord.Embed:
     """format deadlines for an embed post in discord"""
-    deadlines.sort(key=lambda x: (get_due_datetime(x) - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds())
 
     embed = discord.Embed(title="All Deadlines", color=0xeb0000)
     for deadline in deadlines:
         due_date = get_due_datetime(deadline)
-        set_date = parse_iso_date(deadline["start date"])
+        start_date = get_start_datetime(deadline)
         
         a = int(due_date.timestamp())
-        embed.add_field(name=f"{deadline['name']} ~ {deadline['subject']}", value=str("<t:" + str(a) + ":F>") + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
+        if start_date > pytz.utc.localize(datetime.datetime.utcnow()):
+            time_until = " ~ starts <t:" + str(a) + ":R>"
+        else:
+            time_until = " ~ due <t:" + str(a) + ":R>"
+        
+        date_string = due_date.strftime("%a, %d %b %H:%M") + time_until
+        print(date_string)
+        
+        embed.add_field(name=f"{deadline['name']} ~ {deadline['subject']}", value=date_string + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
     return embed
 
 def format_all_deadlines_to_string(deadlines: list[dict]) -> str:
     deadline_matrix = []
-    deadlines.sort(key=lambda x: (get_due_datetime(x) - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds())
     for deadline in deadlines:
         course: str = deadline["subject"]
         name: str = deadline["name"]
@@ -123,8 +140,6 @@ def format_all_deadlines_to_string(deadlines: list[dict]) -> str:
         due_date = get_due_datetime(deadline)
 
         remaining_time = calculate_remaining_time(due_date)
-
-        progress = calculate_progress(set_date, due_date)
 
 
 
@@ -140,12 +155,12 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
 
     @commands.command()
     async def all(self, ctx, *_):
-        """template command"""
-        deadlines = get_deadlines()
+        """displays all the deadlines"""
+        deadlines = sort_by_due(get_deadlines())
         await ctx.send(embed=format_deadlines_for_embed(deadlines))
 
     @commands.command()
     async def all_debug(self, ctx, *_):
-        """template command"""
+        """displays all the deadlines and their sotred values for debugging"""
         deadlines = get_deadlines()
         await ctx.send(format_all_deadlines_to_string(deadlines))
