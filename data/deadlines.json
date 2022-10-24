@@ -1,13 +1,14 @@
 [
-    {"name":"CW2 - EXPO", "subject":"F28ED", "start date" : "2022-11-02", "due date" : "2022-11-09", "start time":"00:00", "due time":"23:59"},
-    {"name":"CW1 Python", "subject":"F28PL", "start date" : "2022-10-08", "due date" : "2022-10-26", "start time":"00:00", "due time":"15:30"},
-    {"name":"Lab 4 Queues & doubly linked lists", "subject":"F28SG", "start date" : "2022-10-07", "due date" : "2022-10-28", "start time":"00:00", "due time":"15:30"},
-    {"name":"Lab 5: Search", "subject":"F28SG", "start date" : "2022-10-14", "due date" : "2022-11-04", "start time":"00:00", "due time":"15:30"},
-    {"name":"Lab 6: Binary trees, priority queues", "subject":"F28SG", "start date" : "2022-10-28", "due date" : "2022-11-11", "start time":"00:00", "due time":"15:30"},
-    {"name":"Lab 7: Tries, sorting", "subject":"F28SG", "start date" : "2022-11-11", "due date" : "2022-11-25", "start time":"00:00", "due time":"15:30"},
-    {"name":"Lab 8: Parallel sorting", "subject":"F28SG", "start date" : "2022-11-18", "due date" : "2022-12-02", "start time":"00:00", "due time":"15:30"},
-    {"name":"Week 7 test", "subject":"F28WP", "start date" : "2022-10-28", "due date" : "2022-10-28", "start time":"16:00", "due time":"17:00"},
-    {"name":"Week 9 test", "subject":"F28WP", "start date" : "2022-11-11", "due date" : "2022-11-11", "start time":"16:00", "due time":"17:00"},
-    {"name":"Week 11 test", "subject":"F28WP", "start date" : "2022-11-25", "due date" : "2022-11-25", "start time":"16:00", "due time":"17:00"},
-    {"name":"Interm test", "subject":"F28ED", "start date" : "2022-10-24", "due date" : "2022-10-24", "start time":"00:01", "due time":"23:59"}
+    {"name":"CW2 - EXPO", "subject":"F28ED", "start-datetime" : "2022-11-02 00:00", "due-datetime" : "2022-11-09 23:59"},
+    {"name":"CW1 Python", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30"},
+    {"name":"Lab 4 Queues & doubly linked lists", "subject":"F28SG", "start-datetime" : "2022-10-07 00:00", "due-datetime" : "2022-10-28 15:30"},
+    {"name":"Lab 5: Search", "subject":"F28SG", "start-datetime" : "2022-10-14 00:00", "due-datetime" : "2022-11-04 15:30"},
+    {"name":"Lab 6: Binary trees, priority queues", "subject":"F28SG", "start-datetime" : "2022-10-28 00:00", "due-datetime" : "2022-11-11 15:30"},
+    {"name":"Lab 7: Tries, sorting", "subject":"F28SG", "start-datetime" : "2022-11-11 00:00", "due-datetime" : "2022-11-25 15:30"},
+    {"name":"Lab 8: Parallel sorting", "subject":"F28SG", "start-datetime" : "2022-11-18 00:00", "due-datetime" : "2022-12-02 15:30"},
+    {"name":"Week 7 test", "subject":"F28WP", "start-datetime" : "2022-10-28 16:00", "due-datetime" : "2022-10-28 17:00"},
+    {"name":"Week 9 test", "subject":"F28WP", "start-datetime" : "2022-11-11 16:00", "due-datetime" : "2022-11-11 17:00"},
+    {"name":"Week 11 test", "subject":"F28WP", "start-datetime" : "2022-11-25 16:00", "due-datetime" : "2022-11-25 17:00"},
+    {"name":"Week 11 test", "subject":"F28WP", "start-datetime" : "2022-10-25 16:20", "due-datetime" : "2022-10-27 17:00"},
+    {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59"}
 ]
