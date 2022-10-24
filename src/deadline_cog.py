@@ -116,8 +116,9 @@ def format_deadlines_for_embed(deadlines: list[dict]) -> discord.Embed:
     for deadline in deadlines:
         due_date = get_due_datetime(deadline)
         start_date = get_start_datetime(deadline)
-        
-        a = int(due_date.timestamp())
+
+        due_timestamp = int(due_date.timestamp())
+        start_timestamp = int(start_date.timestamp())
         if start_date > pytz.utc.localize(datetime.datetime.utcnow()):
             time_until = " ~ starts <t:" + str(a) + ":R>"
         else:
@@ -149,7 +150,38 @@ def format_all_deadlines_to_string(deadlines: list[dict]) -> str:
 
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None]) + "```"
 
+def calculate_announce_times(deadline):
+    before_start = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
+    before_due = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
 
+    due_date = get_due_datetime(deadline)
+    start_date = get_start_datetime(deadline)
+    if not due_date or not start_date:
+        return
+
+    announce_times_before_start = []
+
+    for delta in before_start:
+        time_at_announce = start_date - delta
+        if time_at_announce.hour < 8:
+            time_at_announce -= datetime.timedelta(days=1)
+            time_at_announce = time_at_announce.replace(hour=18, minute=0)
+        if time_at_announce.hour > 18:
+            time_at_announce = time_at_announce.replace(hour=18, minute=0)
+        announce_times_before_start.append(time_at_announce)
+    
+    announce_times_before_due = []
+
+    for delta in before_due:
+        time_at_announce = due_date - delta
+        if time_at_announce.hour < 8:
+            time_at_announce -= datetime.timedelta(days=1)
+            time_at_announce = time_at_announce.replace(hour=17, minute=0)
+        if time_at_announce.hour > 18:
+            time_at_announce = time_at_announce.replace(hour=18, minute=0)
+        if time_at_announce > start_date:
+            announce_times_before_due.append(time_at_announce)
+    return announce_times_before_start, announce_times_before_due
 class DeadlineCog(commands.Cog, name='Deadlines'):
     """Deadline cog"""
 
