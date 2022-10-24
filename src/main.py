@@ -43,7 +43,7 @@ async def on_ready():
         print("adding announcement for " + deadline['name'] + " scheduled at " + str(announce_at))
         await asyncio.sleep(seconds_until_announce) #sleep until it has to send the announcement
         channel = bot.get_channel(int(ANNOUNCE_CHANNEL))
-        await channel.send(deadline['name'] + " is due in" + format_time_delta(announce_before))
+        await channel.send(deadline['name'] + " is due " + f"<t:{int(deadline_at.timestamp())}:R>")
 
 
     loop = asyncio.get_event_loop()
