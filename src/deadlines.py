@@ -8,8 +8,8 @@ class Deadline:
         self.name = json['name']
         self.subject = json['subject']
         timezone = pytz.timezone("europe/london")
-        self.start_datetime = timezone.localize(datetime.datetime.strptime(json['start-datetime'], "%Y-%m-%d %H:%M"))
-        self.due_datetime = timezone.localize(datetime.datetime.strptime(json['due-datetime'], "%Y-%m-%d %H:%M"))
+        self.start_datetime: datetime.datetime = timezone.localize(datetime.datetime.strptime(json['start-datetime'], "%Y-%m-%d %H:%M"))
+        self.due_datetime: datetime.datetime = timezone.localize(datetime.datetime.strptime(json['due-datetime'], "%Y-%m-%d %H:%M"))
 
     def calculate_announce_times(self):
         before_start = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
@@ -37,7 +37,7 @@ class Deadline:
             time_at_announce = due_date - delta
             if time_at_announce.hour < 8:
                 time_at_announce -= datetime.timedelta(days=1)
-                time_at_announce = time_at_announce.replace(hour=17, minute=0)
+                time_at_announce = time_at_announce.replace(hour=18, minute=0)
             if time_at_announce.hour > 18:
                 time_at_announce = time_at_announce.replace(hour=18, minute=0)
             if time_at_announce > start_date:
@@ -53,14 +53,14 @@ def get_deadlines() -> list[Deadline]:
            deadlines.append(Deadline(deadline)) 
         return deadlines
 
-def sort_by_due(deadlines: list[Deadline], reverse=False) -> list[Deadline]:
+def sort_by_due(deadlines: list[Deadline], reverse: bool=False) -> list[Deadline]:
     deadlines.sort(key=lambda x: (x.due_datetime - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds(), reverse=reverse)
     return deadlines
 
-def format_deadlines_for_embed(deadlines: list[Deadline]) -> discord.Embed:
+def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> discord.Embed:
     """format deadlines for an embed post in discord"""
 
-    embed = discord.Embed(title="All Deadlines", color=0xeb0000)
+    embed = discord.Embed(title=heading, color=0xeb0000)
     for deadline in deadlines:
         due_date = deadline.due_datetime
         start_date = deadline.start_datetime

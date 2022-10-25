@@ -79,7 +79,31 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def all(self, ctx, *_):
         """displays all the deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines))
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
+
+    @commands.command()
+    async def past(self, ctx, *_):
+        """displays all the deadlines"""
+        deadlines = dl.sort_by_due(dl.get_deadlines())
+        timezone = pytz.timezone("Europe/London")
+        deadlines = filter(lambda x: x.due_datetime < timezone.localize(datetime.datetime.now()), deadlines)
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines"))
+
+    @commands.command()
+    async def upcoming(self, ctx, *_):
+        """displays all the deadlines"""
+        deadlines = dl.sort_by_due(dl.get_deadlines())
+        timezone = pytz.timezone("Europe/London")
+        deadlines = filter(lambda x: x.due_datetime > timezone.localize(datetime.datetime.now()), deadlines)
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Upcoming Deadlines"))
+
+    @commands.command()
+    async def thisweek(self, ctx, *_):
+        """displays all the deadlines"""
+        deadlines = dl.sort_by_due(dl.get_deadlines())
+        timezone = pytz.timezone("Europe/London")
+        deadlines = filter(lambda x: x.due_datetime < timezone.localize(datetime.datetime.now() + datetime.timedelta(days= 6 - datetime.datetime.now().weekday())), deadlines)
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Deadlines This Week"))
 
     @commands.command()
     async def all_debug(self, ctx, *_):
