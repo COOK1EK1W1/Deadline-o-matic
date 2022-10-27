@@ -10,6 +10,7 @@ class Deadline:
         timezone = pytz.timezone("europe/london")
         self.start_datetime: datetime.datetime = timezone.localize(datetime.datetime.strptime(json['start-datetime'], "%Y-%m-%d %H:%M"))
         self.due_datetime: datetime.datetime = timezone.localize(datetime.datetime.strptime(json['due-datetime'], "%Y-%m-%d %H:%M"))
+        self.timezone = pytz.timezone("Europe/London")
 
     def calculate_announce_times(self):
         before_start = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
@@ -43,6 +44,12 @@ class Deadline:
             if time_at_announce > start_date:
                 announce_times_before_due.append(time_at_announce)
         return announce_times_before_start, announce_times_before_due
+    
+    def due_in_future(self) -> bool:
+        return self.due_datetime > self.timezone.localize(datetime.datetime.now())
+    
+    def due_in_past(self) -> bool:
+        return not self.due_in_future()
 
 
 def get_deadlines() -> list[Deadline]:

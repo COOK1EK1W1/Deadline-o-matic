@@ -4,6 +4,10 @@ Desiged by Ciaran for the Heriot Watt year 2 discord server
 ## Commands
 
 - `.all` will display all the current deadlines
+- `.thisweek` will display all deadlines this week
+- `.past` will display deadlines that are in the past
+- `.upcoming` will show all deadlines which have not finished
+- `.next` will show the next deadline
 
 
 ## How to run the bot
