@@ -24,8 +24,8 @@ async def on_ready():
     """when logged in"""
     print(f'We have logged in as {bot.user}')
     print("")
-    await bot.change_presence(status=discord.Status.online)
-
+    await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
+    
     if not ANNOUNCE_CHANNEL:
         print("no announcement channel, anouncements disabled")
         return
