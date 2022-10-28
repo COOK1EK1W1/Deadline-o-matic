@@ -86,9 +86,7 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
             strike = "~~"
 
         colours = {"F28ED":":green_circle:", "F28PL":":red_circle:", "F28SG":":blue_circle:", "F28WP":":yellow_circle:"}
-        subject_string = colours[deadline.subject] + " " + deadline.subject + " " + colours[deadline.subject]
-        
-        embed.add_field(name=f"{strike}{deadline.name} | {subject_string}{strike}", value=date_string + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
+        embed.add_field(name=f"{strike}{colours[deadline.subject]} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
     return embed
 
 
