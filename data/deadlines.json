@@ -1,5 +1,4 @@
 [
-    {"name":"CW2 - EXPO", "subject":"F28ED", "start-datetime" : "2022-11-07 00:00", "due-datetime" : "2022-11-11 23:59"},
     {"name":"CW1 Python", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30"},
     {"name":"CW2 OCaml", "subject":"F28PL", "start-datetime" : "2022-11-08 00:00", "due-datetime" : "2022-11-23 15:30"},
     {"name":"CW3 Prolog", "subject":"F28PL", "start-datetime" : "2022-11-23 00:00", "due-datetime" : "2022-12-07 15:30"},
@@ -11,5 +10,8 @@
     {"name":"Week 7 test", "subject":"F28WP", "start-datetime" : "2022-10-28 16:00", "due-datetime" : "2022-10-28 17:00"},
     {"name":"Week 9 test", "subject":"F28WP", "start-datetime" : "2022-11-11 16:00", "due-datetime" : "2022-11-11 17:00"},
     {"name":"Week 11 test", "subject":"F28WP", "start-datetime" : "2022-11-25 16:00", "due-datetime" : "2022-11-25 17:00"},
-    {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59"}
+    {"name":"CW2 - EXPO", "subject":"F28ED", "start-datetime" : "2022-11-07 00:00", "due-datetime" : "2022-11-11 23:59"},
+    {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59"},
+    {"name":"Interm test 2", "subject":"F28ED", "start-datetime" : "2022-11-21 00:00", "due-datetime" : "2022-11-21 23:59"},
+    {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "2022-11-11 23:59", "due-datetime" : "2022-12-07 15:30"}
 ]
