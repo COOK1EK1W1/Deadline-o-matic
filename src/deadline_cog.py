@@ -94,7 +94,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         """display upcoming deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
         deadlines = filter(lambda x: x.due_in_future(), deadlines)
-        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Upcoming Deadlines"))
+        await ctx.send(embed=dl.format_deadlines_for_embed(list(deadlines)[:8], "Upcoming Deadlines"))
 
     @commands.command()
     async def thisweek(self, ctx, *_):
