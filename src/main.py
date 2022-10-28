@@ -32,7 +32,8 @@ async def on_ready():
 
     ###announcement scheduling
     async def announce_deadline(deadline: deadlines.Deadline):
-        before_start, before_due = deadline.calculate_announce_times()
+        before_start = deadline.calculate_announce_before_start()
+        before_due = deadline.calculate_announce_before_due()
         deadline_start_at = deadline.start_datetime
         deadline_due_at = deadline.due_datetime
         channel = bot.get_channel(int(ANNOUNCE_CHANNEL))
