@@ -14,6 +14,7 @@ class Deadline:
         self.room = json['room']
         self.url = json['url']
         self.mark = int(json['mark'] * 100)
+        self.info = json['info']
 
     def calculate_announce_before_due(self) -> list[datetime.datetime]:
         before_due = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
@@ -114,15 +115,18 @@ def format_single_deadline(deadline: Deadline) -> discord.Embed:
     room = deadline.room
     mark = deadline.mark
     url = deadline.url
+    info = deadline.info
     embed = discord.Embed(title=name+" | "+subject, url=url)
     if mark:
-        embed.add_field(name="mark", value=str(mark)+"%")
+        embed.add_field(name="Mark", value=str(mark)+"%", inline=False)
     if room:
-        embed.add_field(name="room", value=room)
+        embed.add_field(name="Room", value=room, inline=False)
     if start_date:
-        embed.add_field(name="start", value=start_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(start_date.timestamp())) + ":R>")
+        embed.add_field(name="Start", value=start_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(start_date.timestamp())) + ":R>", inline=False)
     if due_date:
-        embed.add_field(name="due", value=due_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(due_date.timestamp())) + ":R>")
+        embed.add_field(name="Due", value=due_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(due_date.timestamp())) + ":R>", inline=False)
+    if info:
+        embed.add_field(name="Info", value=info, inline=False) 
     return embed
 
 

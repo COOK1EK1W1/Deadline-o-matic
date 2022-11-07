@@ -1,22 +1,22 @@
 [
-    {"name":"CW1 Python", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"", "url":""},
-    {"name":"CW2 OCaml", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-11-23 15:30", "mark":0.4, "room":"", "url":""},
-    {"name":"CW3 Prolog", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.2, "room":"", "url":""},
+    {"name":"CW1 Python", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"", "url":"", "info":""},
+    {"name":"CW2 OCaml", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-11-23 15:30", "mark":0.4, "room":"", "url":"", "info":"lol"},
+    {"name":"CW3 Prolog", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.2, "room":"", "url":"", "info":""},
 
-    {"name":"Lab 4: Queues & doubly linked lists", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-10-28 15:30", "mark":0.06, "room":"", "url":""},
-    {"name":"Lab 5: Search", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-04 15:30", "mark":0.06, "room":"", "url":""},
-    {"name":"Lab 6: Binary trees, priority queues", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-11 15:30", "mark":0.06, "room":"", "url":"https://canvas.hw.ac.uk/courses/20808/assignments/103625?module_item_id=1529726"},
-    {"name":"Lab 7: Tries, sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-25 15:30", "mark":0.06, "room":"", "url":"https://canvas.hw.ac.uk/courses/20808/assignments/103626?module_item_id=1529727"},
-    {"name":"Lab 8: Parallel sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-12-02 15:30", "mark":0.06, "room":"", "url":""},
+    {"name":"Lab 4: Queues & doubly linked lists", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-10-28 15:30", "mark":0.06, "room":"", "url":"", "info":""},
+    {"name":"Lab 5: Search", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-04 15:30", "mark":0.06, "room":"", "url":"", "info":"Push to Gitlab"},
+    {"name":"Lab 6: Binary trees, priority queues", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-11 15:30", "mark":0.06, "room":"", "url":"https://canvas.hw.ac.uk/courses/20808/assignments/103625?module_item_id=1529726", "info":"Push to Gitlab"},
+    {"name":"Lab 7: Tries, sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-25 15:30", "mark":0.06, "room":"", "url":"https://canvas.hw.ac.uk/courses/20808/assignments/103626?module_item_id=1529727", "info":"Push to Gitlab"},
+    {"name":"Lab 8: Parallel sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-12-02 15:30", "mark":0.06, "room":"", "url":"", "info":"push to gitlab"},
 
-    {"name":"Week 7 test", "subject":"F28WP", "start-datetime" : "2022-10-28 16:00", "due-datetime" : "2022-10-28 17:00", "mark":0.125, "room":"EM250, JMG56, SR320", "url":""},
-    {"name":"Week 9 test", "subject":"F28WP", "start-datetime" : "2022-11-11 16:00", "due-datetime" : "2022-11-11 17:00", "mark":0.125, "room":"EM250, JMG56, SR320", "url":""},
-    {"name":"Week 11 test", "subject":"F28WP", "start-datetime" : "2022-11-25 16:00", "due-datetime" : "2022-11-25 17:00", "mark":0.125, "room":"EM250, JMG56, SR320", "url":""},
+    {"name":"Week 7 test", "subject":"F28WP", "start-datetime" : "2022-10-28 16:00", "due-datetime" : "2022-10-28 17:00", "mark":0.125, "room":"EM250, JMG56, SR320", "url":"", "info":""},
+    {"name":"Week 9 test", "subject":"F28WP", "start-datetime" : "2022-11-11 16:00", "due-datetime" : "2022-11-11 17:00", "mark":0.125, "room":"EM250, JMG56, SR320", "url":"", "info":""},
+    {"name":"Week 11 test", "subject":"F28WP", "start-datetime" : "2022-11-25 16:00", "due-datetime" : "2022-11-25 17:00", "mark":0.125, "room":"EM250, JMG56, SR320", "url":"", "info":""},
 
-    {"name":"CW1: Experimental Plan + presentation", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-10-12 23:59", "mark":0.20, "room":"", "url":""},
-    {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59", "mark":0.1, "room":"", "url":""},
-    {"name":"CW2: EXPO", "subject":"F28ED", "start-datetime" : "2022-11-07 00:00", "due-datetime" : "2022-11-11 23:59", "mark":0.15, "room":"", "url":"https://canvas.hw.ac.uk/courses/20780/assignments/103257"},
-    {"name":"Stats Quiz", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-18 23:59", "mark":0.5, "room":"", "url":""},
-    {"name":"Interm test 2", "subject":"F28ED", "start-datetime" : "2022-11-21 00:00", "due-datetime" : "2022-11-21 23:59", "mark":0.1, "room":"", "url":""},
-    {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.4, "room":"", "url":""}
+    {"name":"CW1: Experimental Plan + presentation", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-10-12 23:59", "mark":0.20, "room":"", "url":"", "info":""},
+    {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59", "mark":0.1, "room":"", "url":"", "info":""},
+    {"name":"CW2: EXPO", "subject":"F28ED", "start-datetime" : "2022-11-07 00:00", "due-datetime" : "2022-11-11 23:59", "mark":0.15, "room":"", "url":"https://canvas.hw.ac.uk/courses/20780/assignments/103257", "info":""},
+    {"name":"Stats Quiz", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-18 23:59", "mark":0.5, "room":"", "url":"", "info":""},
+    {"name":"Interm test 2", "subject":"F28ED", "start-datetime" : "2022-11-21 00:00", "due-datetime" : "2022-11-21 23:59", "mark":0.1, "room":"", "url":"", "info":""},
+    {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.4, "room":"", "url":"", "info":""}
 ]
