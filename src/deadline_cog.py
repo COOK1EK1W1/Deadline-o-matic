@@ -124,7 +124,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def info(self, ctx, *a):
         """displays all the deadlines and their sotred values for debugging"""
         deadlines = dl.get_deadlines()
-        if a == "next":
+        if a == ("next",):
             deadline = list(filter(lambda x: x.due_in_future(), dl.sort_by_due(deadlines)))[0]
             await ctx.send(embed=dl.format_single_deadline(deadline))
         else:
