@@ -118,3 +118,16 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         """displays all the deadlines and their sotred values for debugging"""
         deadlines = dl.get_deadlines()
         await ctx.send(format_all_deadlines_to_string(deadlines))
+    
+
+    @commands.command()
+    async def info(self, ctx, *a):
+        """displays all the deadlines and their sotred values for debugging"""
+        deadlines = dl.get_deadlines()
+        if a == "next":
+            deadline = list(filter(lambda x: x.due_in_future(), dl.sort_by_due(deadlines)))[0]
+            await ctx.send(embed=dl.format_single_deadline(deadline))
+        else:
+            for x in deadlines:
+                if x.name == " ".join(a):
+                    await ctx.send(embed=dl.format_single_deadline(x))
