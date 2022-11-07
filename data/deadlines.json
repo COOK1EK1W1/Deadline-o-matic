@@ -1,17 +1,22 @@
 [
-    {"name":"CW1 Python", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30"},
-    {"name":"CW2 OCaml", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-11-23 15:30"},
-    {"name":"CW3 Prolog", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30"},
-    {"name":"Lab 4: Queues & doubly linked lists", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-10-28 15:30"},
-    {"name":"Lab 5: Search", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-04 15:30"},
-    {"name":"Lab 6: Binary trees, priority queues", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-11 15:30"},
-    {"name":"Lab 7: Tries, sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-25 15:30"},
-    {"name":"Lab 8: Parallel sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-12-02 15:30"},
-    {"name":"Week 7 test", "subject":"F28WP", "start-datetime" : "2022-10-28 16:00", "due-datetime" : "2022-10-28 17:00"},
-    {"name":"Week 9 test", "subject":"F28WP", "start-datetime" : "2022-11-11 16:00", "due-datetime" : "2022-11-11 17:00"},
-    {"name":"Week 11 test", "subject":"F28WP", "start-datetime" : "2022-11-25 16:00", "due-datetime" : "2022-11-25 17:00"},
-    {"name":"CW2: EXPO", "subject":"F28ED", "start-datetime" : "2022-11-07 00:00", "due-datetime" : "2022-11-11 23:59"},
-    {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59"},
-    {"name":"Interm test 2", "subject":"F28ED", "start-datetime" : "2022-11-21 00:00", "due-datetime" : "2022-11-21 23:59"},
-    {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30"}
+    {"name":"CW1 Python", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30", "mark":0.4},
+    {"name":"CW2 OCaml", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-11-23 15:30", "mark":0.4},
+    {"name":"CW3 Prolog", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.2},
+
+    {"name":"Lab 4: Queues & doubly linked lists", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-10-28 15:30", "mark":0.06},
+    {"name":"Lab 5: Search", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-04 15:30", "mark":0.06},
+    {"name":"Lab 6: Binary trees, priority queues", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-11 15:30", "mark":0.06},
+    {"name":"Lab 7: Tries, sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-11-25 15:30", "mark":0.06},
+    {"name":"Lab 8: Parallel sorting", "subject":"F28SG", "start-datetime" : "", "due-datetime" : "2022-12-02 15:30", "mark":0.06},
+
+    {"name":"Week 7 test", "subject":"F28WP", "start-datetime" : "2022-10-28 16:00", "due-datetime" : "2022-10-28 17:00", "mark":0.125},
+    {"name":"Week 9 test", "subject":"F28WP", "start-datetime" : "2022-11-11 16:00", "due-datetime" : "2022-11-11 17:00", "mark":0.125},
+    {"name":"Week 11 test", "subject":"F28WP", "start-datetime" : "2022-11-25 16:00", "due-datetime" : "2022-11-25 17:00", "mark":0.125},
+
+    {"name":"CW1: Experimental Plan + presentation", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-10-12 23:59", "mark":0.20},
+    {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59", "mark":0.1},
+    {"name":"CW2: EXPO", "subject":"F28ED", "start-datetime" : "2022-11-07 00:00", "due-datetime" : "2022-11-11 23:59", "mark":0.15},
+    {"name":"Stats Quiz", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-18 23:59", "mark":0.5},
+    {"name":"Interm test 2", "subject":"F28ED", "start-datetime" : "2022-11-21 00:00", "due-datetime" : "2022-11-21 23:59", "mark":0.1},
+    {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.4}
 ]
