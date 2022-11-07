@@ -11,6 +11,9 @@ class Deadline:
         self.timezone = pytz.timezone("Europe/London")
         self.start_datetime = self.str_to_datetime(json['start-datetime'])
         self.due_datetime = self.str_to_datetime(json['due-datetime'])
+        self.room = json['room']
+        self.url = json['url']
+        self.mark = int(json['mark'] * 100)
 
     def calculate_announce_before_due(self) -> list[datetime.datetime]:
         before_due = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
@@ -100,6 +103,26 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
 
         colours = {"F28ED":":green_circle:", "F28PL":":red_circle:", "F28SG":":blue_circle:", "F28WP":":yellow_circle:"}
         embed.add_field(name=f"{strike}{colours[deadline.subject]} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
+    return embed
+
+
+def format_single_deadline(deadline: Deadline) -> discord.Embed:
+    name = deadline.name
+    subject = deadline.subject
+    due_date = deadline.due_datetime
+    start_date = deadline.start_datetime
+    room = deadline.room
+    mark = deadline.mark
+    url = deadline.url
+    embed = discord.Embed(title=name+" | "+subject, url=url)
+    if mark:
+        embed.add_field(name="mark", value=str(mark)+"%")
+    if room:
+        embed.add_field(name="room", value=room)
+    if start_date:
+        embed.add_field(name="start", value=start_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(start_date.timestamp())) + ":R>")
+    if due_date:
+        embed.add_field(name="due", value=due_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(due_date.timestamp())) + ":R>")
     return embed
 
 
