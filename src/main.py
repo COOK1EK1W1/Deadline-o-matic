@@ -7,6 +7,7 @@ import deadlines
 import asyncio
 import datetime
 import pytz
+import deadlines as dl
 
 from deadline_cog import DeadlineCog
 
@@ -57,7 +58,8 @@ async def on_ready():
 
             print("adding announcement for " + deadline.name + " scheduled at " + str(announce_at))
             await asyncio.sleep(seconds_until_announce) #sleep until it has to send the announcement
-            await channel.send(deadline.name + " is due " + f"<t:{int(deadline_due_at.timestamp())}:R>")
+            embed = dl.format_single_deadline(deadline)
+            await channel.send(deadline.name + " is due " + f"<t:{int(deadline_due_at.timestamp())}:R>", embed=embed)
 
 
     loop = asyncio.get_event_loop()

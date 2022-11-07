@@ -116,7 +116,7 @@ def format_single_deadline(deadline: Deadline) -> discord.Embed:
     mark = deadline.mark
     url = deadline.url
     info = deadline.info
-    embed = discord.Embed(title=name+" | "+subject, url=url)
+    embed = discord.Embed(title=name+" | "+subject, url=url, color=0xeb0000)
     if mark:
         embed.add_field(name="Mark", value=str(mark)+"%", inline=False)
     if room:
