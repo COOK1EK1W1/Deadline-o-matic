@@ -18,6 +18,7 @@ class Deadline:
         self.info = json['info']
 
     def calculate_announce_before_due(self) -> list[datetime.datetime]:
+        """calculate the times at which an announement should be made before the due time"""
         before_due = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
 
         due_date = self.due_datetime
@@ -39,6 +40,7 @@ class Deadline:
         return announce_times_before_due
 
     def calculate_announce_before_start(self) -> list[datetime.datetime]:
+        """calculate the times at which an announement should be made before the start"""
         before_start = [datetime.timedelta(days=1), datetime.timedelta(seconds=60*30)]
         start_date = self.start_datetime
 
@@ -57,18 +59,22 @@ class Deadline:
         return announce_times_before_start
 
     def str_to_datetime(self, datetime_str: str) -> Optional[datetime.datetime]:
+        """convert a string to a datetime"""
         if datetime_str == "":
             return None
         else:
             return self.timezone.localize(datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M"))
     
     def due_in_future(self) -> bool:
+        """test if the deadline is due in the future"""
         return self.get_due_date_if_exsits() > self.timezone.localize(datetime.datetime.now())
     
     def due_in_past(self) -> bool:
+        """test if the deadline is due in the past"""
         return not self.due_in_future()
 
     def format_for_embed(self) -> discord.Embed:
+        """format the deadline for a discord embed"""
         embed = discord.Embed(title=self.name + " | " + self.subject, url=self.url, color=0xeb0000)
         if self.mark:
             embed.add_field(name="Mark", value=str(self.mark)+"%", inline=False)
@@ -82,13 +88,15 @@ class Deadline:
             embed.add_field(name="Info", value=self.info, inline=False) 
         return embed
     
-    def get_due_date_if_exsits(self) -> datetime.datetime:
+    def get_due_date_if_exsits(self) -> datetime.tatetime:
+        """return datetime if exists else return some time in the future"""
         if self.due_datetime is not None:
             return self.due_datetime
         else:
             return self.timezone.localize(datetime.datetime.now()+datetime.timedelta(days=100*365))
 
     def get_start_date_if_exsits(self) -> datetime.datetime:
+        """return datetime if exists else return default time in past"""
         if self.start_datetime is not None:
             return self.start_datetime
         else:
@@ -99,9 +107,11 @@ class Deadline:
         return self.get_due_date_if_exsits() - pytz.utc.localize(datetime.datetime.utcnow())
 
     def format_to_list(self):
+        """format all the data to a list"""
         return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
 
 def get_deadlines() -> list[Deadline]:
+    """read the deadlines from file"""
     with open("data/deadlines.json", "r", encoding="utf-8") as file:
         data =  json.loads(file.read())
         deadlines: list[Deadline] = []
@@ -110,25 +120,30 @@ def get_deadlines() -> list[Deadline]:
         return deadlines
 
 def sort_by_due(deadlines: list[Deadline], reverse: bool=False) -> list[Deadline]:
+    """sort the deadlines in order of due date"""
     deadlines.sort(key=lambda x: x.get_due_date_if_exsits(), reverse=reverse)
     return deadlines
 
 
 def filter_due_after(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
-
+    """keep dates which are after a certain time"""
     return list(filter(lambda x: x.get_due_date_if_exsits() > x.timezone.localize(time), deadlines))
 
 
 def filter_due_before(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
+    """keep dates which are before a certain times"""
     return list(filter(lambda x: x.get_due_date_if_exsits() < x.timezone.localize(time), deadlines))
 
 def filter_due_after_now(deadlines: list[Deadline]) -> list[Deadline]:
+    """keep dates which are due after now"""
     return list(filter(lambda x: x.due_in_future(), deadlines))
 
 def filter_due_before_now(deadlines: list[Deadline]) -> list[Deadline]:
+    """keep dates which are due before now"""
     return list(filter(lambda x: x.due_in_past(), deadlines))
 
-def now():
+def now() -> datetime.datetime:
+    """shortcut for datetime of now"""
     return datetime.datetime.now()
 
 def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> discord.Embed:

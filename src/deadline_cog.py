@@ -49,6 +49,7 @@ def format_time_delta(delta: datetime.timedelta) -> str:
 
 
 def format_all_deadlines_to_string(deadlines: list[dl.Deadline]) -> str:
+    """convert all deadlines to a table in ascci format"""
     deadline_matrix = []
     for deadline in deadlines:
         deadline_matrix.append(deadline.format_to_list())
