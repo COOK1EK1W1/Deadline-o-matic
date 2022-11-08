@@ -68,6 +68,28 @@ class Deadline:
     def due_in_past(self) -> bool:
         return not self.due_in_future()
 
+    def format_for_embed(self) -> discord.Embed:
+        name = self.name
+        subject = self.subject
+        due_date = self.due_datetime
+        start_date = self.start_datetime
+        room = self.room
+        mark = self.mark
+        url = self.url
+        info = self.info
+        embed = discord.Embed(title=name+" | "+subject, url=url, color=0xeb0000)
+        if mark:
+            embed.add_field(name="Mark", value=str(mark)+"%", inline=False)
+        if room:
+            embed.add_field(name="Room", value=room, inline=False)
+        if start_date:
+            embed.add_field(name="Start", value=start_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(start_date.timestamp())) + ":R>", inline=False)
+        if due_date:
+            embed.add_field(name="Due", value=due_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(due_date.timestamp())) + ":R>", inline=False)
+        if info:
+            embed.add_field(name="Info", value=info, inline=False) 
+        return embed
+
 
 def get_deadlines() -> list[Deadline]:
     with open("data/deadlines.json", "r", encoding="utf-8") as file:
@@ -78,7 +100,7 @@ def get_deadlines() -> list[Deadline]:
         return deadlines
 
 def sort_by_due(deadlines: list[Deadline], reverse: bool=False) -> list[Deadline]:
-    deadlines.sort(key=lambda x: (x.due_datetime - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds(), reverse=reverse)
+    deadlines.sort(key=lambda x: x.due_datetime, reverse=reverse)
     return deadlines
 
 def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> discord.Embed:
@@ -104,29 +126,6 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
 
         colours = {"F28ED":":test_tube:", "F28PL":":keyboard:", "F28SG":":classical_building:", "F28WP":":globe_with_meridians:"}
         embed.add_field(name=f"{strike}{colours[deadline.subject]} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
-    return embed
-
-
-def format_single_deadline(deadline: Deadline) -> discord.Embed:
-    name = deadline.name
-    subject = deadline.subject
-    due_date = deadline.due_datetime
-    start_date = deadline.start_datetime
-    room = deadline.room
-    mark = deadline.mark
-    url = deadline.url
-    info = deadline.info
-    embed = discord.Embed(title=name+" | "+subject, url=url, color=0xeb0000)
-    if mark:
-        embed.add_field(name="Mark", value=str(mark)+"%", inline=False)
-    if room:
-        embed.add_field(name="Room", value=room, inline=False)
-    if start_date:
-        embed.add_field(name="Start", value=start_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(start_date.timestamp())) + ":R>", inline=False)
-    if due_date:
-        embed.add_field(name="Due", value=due_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(due_date.timestamp())) + ":R>", inline=False)
-    if info:
-        embed.add_field(name="Info", value=info, inline=False) 
     return embed
 
 
