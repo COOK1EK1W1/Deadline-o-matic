@@ -27,7 +27,7 @@ async def on_ready():
     print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
     
-    if not ANNOUNCE_CHANNEL:
+    if ANNOUNCE_CHANNEL is None:
         print("no announcement channel, anouncements disabled")
         return
 
@@ -58,7 +58,7 @@ async def on_ready():
 
             print("adding announcement for " + deadline.name + " scheduled at " + str(announce_at))
             await asyncio.sleep(seconds_until_announce) #sleep until it has to send the announcement
-            embed = dl.format_single_deadline(deadline)
+            embed = deadline.format_single_deadline()
             await channel.send(deadline.name + " is due " + f"<t:{int(deadline_due_at.timestamp())}:R>", embed=embed)
 
 

@@ -69,24 +69,19 @@ class Deadline:
         return not self.due_in_future()
 
     def format_for_embed(self) -> discord.Embed:
-        name = self.name
-        subject = self.subject
         due_date = self.due_datetime
         start_date = self.start_datetime
-        room = self.room
-        mark = self.mark
-        url = self.url
         info = self.info
-        embed = discord.Embed(title=name+" | "+subject, url=url, color=0xeb0000)
-        if mark:
-            embed.add_field(name="Mark", value=str(mark)+"%", inline=False)
-        if room:
-            embed.add_field(name="Room", value=room, inline=False)
-        if start_date:
-            embed.add_field(name="Start", value=start_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(start_date.timestamp())) + ":R>", inline=False)
-        if due_date:
-            embed.add_field(name="Due", value=due_date.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(due_date.timestamp())) + ":R>", inline=False)
-        if info:
+        embed = discord.Embed(title=self.name + " | " + self.subject, url=self.url, color=0xeb0000)
+        if self.mark:
+            embed.add_field(name="Mark", value=str(self.mark)+"%", inline=False)
+        if self.room:
+            embed.add_field(name="Room", value=self.room, inline=False)
+        if self.start_datetime:
+            embed.add_field(name="Start", value=self.due_datetime.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(self.start_datetime.timestamp())) + ":R>", inline=False)
+        if self.due_datetime:
+            embed.add_field(name="Due", value=self.due_datetime.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(self.due_datetime.timestamp())) + ":R>", inline=False)
+        if self.info:
             embed.add_field(name="Info", value=info, inline=False) 
         return embed
 
@@ -102,6 +97,22 @@ def get_deadlines() -> list[Deadline]:
 def sort_by_due(deadlines: list[Deadline], reverse: bool=False) -> list[Deadline]:
     deadlines.sort(key=lambda x: x.due_datetime, reverse=reverse)
     return deadlines
+
+
+def filter_due_after(deadlines: list[Deadline], time):
+    return list(filter(lambda x: x.due_datetime > x.timezone.localize(time), deadlines))
+
+def filter_due_before(deadlines: list[Deadline], time):
+    return list(filter(lambda x: x.due_datetime < x.timezone.localize(time), deadlines))
+
+def filter_due_after_now(deadlines: list[Deadline]):
+    return list(filter(lambda x: x.due_in_future(), deadlines))
+
+def filter_due_before_now(deadlines: list[Deadline]):
+    return list(filter(lambda x: x.due_in_past(), deadlines))
+
+def now():
+    return datetime.datetime.now()
 
 def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> discord.Embed:
     """format deadlines for an embed post in discord"""

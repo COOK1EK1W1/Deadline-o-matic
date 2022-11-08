@@ -79,35 +79,36 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def all(self, ctx, *_):
         """displays all the deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = filter(lambda x: x.due_datetime > x.timezone.localize(datetime.datetime.now() - datetime.timedelta(days= 7)), deadlines)
+        deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days= 7))
         await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
 
     @commands.command()
     async def past(self, ctx, *_):
         """displays past deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = filter(lambda x: x.due_in_past(), deadlines)
+        deadlines = dl.filter_due_before_now(deadlines)
         await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines"))
 
     @commands.command()
     async def upcoming(self, ctx, *_):
         """display upcoming deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = filter(lambda x: x.due_in_future(), deadlines)
-        await ctx.send(embed=dl.format_deadlines_for_embed(list(deadlines)[:8], "Upcoming Deadlines"))
+        deadlines = dl.filter_due_after_now(deadlines)[:8]
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Upcoming Deadlines"))
 
     @commands.command()
     async def thisweek(self, ctx, *_):
         """displays all the deadlines this week"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = filter(lambda x: x.due_datetime < x.timezone.localize(datetime.datetime.now() + datetime.timedelta(days= 6 - datetime.datetime.now().weekday())), deadlines)
+        deadlines = dl.filter_due_before(deadlines, dl.now() + datetime.timedelta(days= 6 - datetime.datetime.now().weekday()))
+        deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days=datetime.datetime.now().weekday()))
         await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Deadlines This Week"))
 
     @commands.command()
     async def next(self, ctx, *_):
         """displays next deadline"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = list(filter(lambda x: x.due_in_future(), deadlines))
+        deadlines = dl.filter_due_after_now()
         if len(deadlines) == 0:
             await ctx.send("no deadlines :)")
             return
@@ -125,9 +126,10 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         """displays all the deadlines and their sotred values for debugging"""
         deadlines = dl.get_deadlines()
         if a == ("next",):
-            deadline = list(filter(lambda x: x.due_in_future(), dl.sort_by_due(deadlines)))[0]
-            await ctx.send(embed=dl.format_single_deadline(deadline))
+            deadlines = dl.sort_by_due(deadlines)
+            deadline = dl.filter_due_after_now(deadlines)[0]
+            await ctx.send(embed=deadline.format_for_embed())
         else:
             for x in deadlines:
                 if x.name == " ".join(a):
-                    await ctx.send(embed=dl.format_single_deadline(x))
+                    await ctx.send(embed=x.format_for_embed())
