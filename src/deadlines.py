@@ -9,6 +9,7 @@ class Deadline:
         self.name = json['name']
         self.subject = json['subject']
         self.timezone = pytz.timezone("Europe/London")
+        
         self.start_datetime = self.str_to_datetime(json['start-datetime'])
         self.due_datetime = self.str_to_datetime(json['due-datetime'])
         self.room = json['room']
@@ -58,20 +59,16 @@ class Deadline:
     def str_to_datetime(self, datetime_str: str) -> Optional[datetime.datetime]:
         if datetime_str == "":
             return None
-        
         else:
             return self.timezone.localize(datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M"))
     
     def due_in_future(self) -> bool:
-        return self.due_datetime > self.timezone.localize(datetime.datetime.now())
+        return self.get_due_date_if_exsits() > self.timezone.localize(datetime.datetime.now())
     
     def due_in_past(self) -> bool:
         return not self.due_in_future()
 
     def format_for_embed(self) -> discord.Embed:
-        due_date = self.due_datetime
-        start_date = self.start_datetime
-        info = self.info
         embed = discord.Embed(title=self.name + " | " + self.subject, url=self.url, color=0xeb0000)
         if self.mark:
             embed.add_field(name="Mark", value=str(self.mark)+"%", inline=False)
@@ -82,9 +79,27 @@ class Deadline:
         if self.due_datetime:
             embed.add_field(name="Due", value=self.due_datetime.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(self.due_datetime.timestamp())) + ":R>", inline=False)
         if self.info:
-            embed.add_field(name="Info", value=info, inline=False) 
+            embed.add_field(name="Info", value=self.info, inline=False) 
         return embed
+    
+    def get_due_date_if_exsits(self) -> datetime.datetime:
+        if self.due_datetime is not None:
+            return self.due_datetime
+        else:
+            return self.timezone.localize(datetime.datetime.now()+datetime.timedelta(days=100*365))
 
+    def get_start_date_if_exsits(self) -> datetime.datetime:
+        if self.start_datetime is not None:
+            return self.start_datetime
+        else:
+            return self.timezone.localize(datetime.datetime.utcfromtimestamp(0))
+    
+    def calculate_remaining_time(self)-> datetime.datetime:
+        """calculate the remaining time"""
+        return self.get_due_date_if_exsits() - pytz.utc.localize(datetime.datetime.utcnow())
+
+    def format_to_list(self):
+        return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
 
 def get_deadlines() -> list[Deadline]:
     with open("data/deadlines.json", "r", encoding="utf-8") as file:
@@ -95,20 +110,22 @@ def get_deadlines() -> list[Deadline]:
         return deadlines
 
 def sort_by_due(deadlines: list[Deadline], reverse: bool=False) -> list[Deadline]:
-    deadlines.sort(key=lambda x: x.due_datetime, reverse=reverse)
+    deadlines.sort(key=lambda x: x.get_due_date_if_exsits(), reverse=reverse)
     return deadlines
 
 
-def filter_due_after(deadlines: list[Deadline], time):
-    return list(filter(lambda x: x.due_datetime > x.timezone.localize(time), deadlines))
+def filter_due_after(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
 
-def filter_due_before(deadlines: list[Deadline], time):
-    return list(filter(lambda x: x.due_datetime < x.timezone.localize(time), deadlines))
+    return list(filter(lambda x: x.get_due_date_if_exsits() > x.timezone.localize(time), deadlines))
 
-def filter_due_after_now(deadlines: list[Deadline]):
+
+def filter_due_before(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
+    return list(filter(lambda x: x.get_due_date_if_exsits() < x.timezone.localize(time), deadlines))
+
+def filter_due_after_now(deadlines: list[Deadline]) -> list[Deadline]:
     return list(filter(lambda x: x.due_in_future(), deadlines))
 
-def filter_due_before_now(deadlines: list[Deadline]):
+def filter_due_before_now(deadlines: list[Deadline]) -> list[Deadline]:
     return list(filter(lambda x: x.due_in_past(), deadlines))
 
 def now():
@@ -122,14 +139,19 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
         due_date = deadline.due_datetime
         start_date = deadline.start_datetime
 
-        due_timestamp = int(due_date.timestamp())
-        if start_date is not None and start_date > pytz.utc.localize(datetime.datetime.utcnow()):
-            start_timestamp = int(start_date.timestamp())
-            time_until = " ~ starts <t:" + str(start_timestamp) + ":R>"
+        if due_date is not None:
+            due_timestamp = int(due_date.timestamp())
+            if start_date is not None and start_date > pytz.utc.localize(datetime.datetime.utcnow()):
+                start_timestamp = int(start_date.timestamp())
+                time_until = " ~ starts <t:" + str(start_timestamp) + ":R>"
+            else:
+                time_until = " ~ due <t:" + str(due_timestamp) + ":R>"
+        else: time_until = ""
+            
+        if due_date is not None:
+            date_string = due_date.strftime("%a, %d %b %H:%M") + time_until
         else:
-            time_until = " ~ due <t:" + str(due_timestamp) + ":R>"
-        
-        date_string = due_date.strftime("%a, %d %b %H:%M") + time_until
+            date_string = "tbc"
 
         strike = ""
         if deadline.due_in_past():

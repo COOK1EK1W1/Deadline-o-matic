@@ -8,11 +8,7 @@ from discord.ext import commands
 
 from tabulate import tabulate
 
-def calculate_remaining_time(date: Optional[datetime.datetime]) -> Optional[datetime.datetime]:
-    """calculate the remaining time"""
-    if date:
-        return date - pytz.utc.localize(datetime.datetime.utcnow())
-    return None
+
 
 def calculate_progress(start: Optional[datetime.datetime], end: Optional[datetime.datetime]) -> Optional[float]:
     """calculate current position in deadline"""
@@ -55,22 +51,8 @@ def format_time_delta(delta: datetime.timedelta) -> str:
 def format_all_deadlines_to_string(deadlines: list[dl.Deadline]) -> str:
     deadline_matrix = []
     for deadline in deadlines:
-        course: str = deadline.subject
-        name: str = deadline.name
-
-        set_date = deadline.start_datetime
-
-        due_date = deadline.due_datetime
-
-        remaining_time = calculate_remaining_time(due_date)
-
-
-
-        deadline_list = [name, course, set_date.strftime("%d %b %H:%M"), due_date.strftime("%d %b %H:%M"), remaining_time]
-
-        deadline_matrix.append(deadline_list)
-
-    return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None]) + "```" 
+        deadline_matrix.append(deadline.format_to_list())
+    return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```" 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
     """Deadline cog"""
@@ -108,7 +90,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def next(self, ctx, *_):
         """displays next deadline"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_after_now()
+        deadlines = dl.filter_due_after_now(deadlines)
         if len(deadlines) == 0:
             await ctx.send("no deadlines :)")
             return
@@ -122,8 +104,8 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     
 
     @commands.command()
-    async def info(self, ctx, *a):
-        """displays all the deadlines and their sotred values for debugging"""
+    async def info(self, ctx, *a: tuple[str]):
+        """display more info for a deadline, use .info next to see the next deadline"""
         deadlines = dl.get_deadlines()
         if a == ("next",):
             deadlines = dl.sort_by_due(deadlines)
