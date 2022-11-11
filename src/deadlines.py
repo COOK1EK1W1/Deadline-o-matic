@@ -88,7 +88,7 @@ class Deadline:
             embed.add_field(name="Info", value=self.info, inline=False) 
         return embed
     
-    def get_due_date_if_exsits(self) -> datetime.tatetime:
+    def get_due_date_if_exsits(self) -> datetime.datetime:
         """return datetime if exists else return some time in the future"""
         if self.due_datetime is not None:
             return self.due_datetime
