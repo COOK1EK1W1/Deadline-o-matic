@@ -19,5 +19,8 @@
     {"name":"CW2: Peer Review", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-14 15:30", "mark":0.15, "room":"", "url":"https://canvas.hw.ac.uk/courses/20780/pages/edinburgh-cw2-peer-review", "info":""},
     {"name":"Stats Quiz", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-18 23:59", "mark":0.5, "room":"", "url":"", "info":""},
     {"name":"Interm test 2", "subject":"F28ED", "start-datetime" : "2022-11-21 00:00", "due-datetime" : "2022-11-21 23:59", "mark":0.1, "room":"", "url":"", "info":""},
-    {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.4, "room":"", "url":"", "info":""}
+    {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.4, "room":"", "url":"", "info":""},
+    
+    {"name":"Data Structues and Algorithms EXAM", "subject":"F28SG", "start-datetime" : "2022-12-08 10:00", "due-datetime" : "2022-12-08 12:00", "mark":0.5, "room":"JW1", "url":"", "info":"2 hours"},
+    {"name":"Web Programming EXAM", "subject":"F28WP", "start-datetime" : "2022-12-14 09:00", "due-datetime" : "2022-12-14 11:00", "mark":0.5, "room":"DB157, EM252, GR1DLa+b", "url":"", "info":"2 hours"}
 ]
