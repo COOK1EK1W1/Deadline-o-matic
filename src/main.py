@@ -20,6 +20,8 @@ ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
 
 bot = commands.Bot(command_prefix=["."])
 
+started_announcements = False
+
 @bot.event
 async def on_ready():
     """when logged in"""
@@ -29,6 +31,10 @@ async def on_ready():
     
     if ANNOUNCE_CHANNEL is None:
         print("no announcement channel, anouncements disabled")
+        return
+
+    if started_announcements:
+        print("announcements already stated, must have reconnected")
         return
 
     ###announcement scheduling
@@ -66,6 +72,7 @@ async def on_ready():
     ##run all the announcements
     for deadline in deadlines.get_deadlines():
         loop.create_task(announce_deadline(deadline))
+    started_announcements = True
 
 
 bot.add_cog(DeadlineCog(bot))
