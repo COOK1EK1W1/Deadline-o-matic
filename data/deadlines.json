@@ -17,7 +17,7 @@
     {"name":"Interm test", "subject":"F28ED", "start-datetime" : "2022-10-24 00:00", "due-datetime" : "2022-10-24 23:59", "mark":0.1, "room":"", "url":"", "info":""},
     {"name":"CW2: EXPO", "subject":"F28ED", "start-datetime" : "2022-11-07 00:00", "due-datetime" : "2022-11-11 23:59", "mark":0.15, "room":"", "url":"https://canvas.hw.ac.uk/courses/20780/assignments/103257", "info":""},
     {"name":"CW2: Peer Review", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-14 15:30", "mark":0.15, "room":"", "url":"https://canvas.hw.ac.uk/courses/20780/pages/edinburgh-cw2-peer-review", "info":""},
-    {"name":"Stats Quiz", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-18 23:59", "mark":0.5, "room":"", "url":"", "info":""},
+    {"name":"Stats Quiz", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-11-18 23:59", "mark":0.5, "room":"", "url":"https://canvas.hw.ac.uk/courses/20780/assignments/108926", "info":"45 minutes to complete within the 24 hours"},
     {"name":"Interm test 2", "subject":"F28ED", "start-datetime" : "2022-11-21 00:00", "due-datetime" : "2022-11-21 23:59", "mark":0.1, "room":"", "url":"", "info":""},
     {"name":"CW3: Final Report", "subject":"F28ED", "start-datetime" : "", "due-datetime" : "2022-12-07 15:30", "mark":0.4, "room":"", "url":"", "info":""},
     

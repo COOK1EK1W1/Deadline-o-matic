@@ -110,14 +110,17 @@ class Deadline:
         """format all the data to a list"""
         return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
 
-def get_deadlines() -> list[Deadline]:
-    """read the deadlines from file"""
+def read_deadlines_to_json():
+    """read the deadlines from a file"""
     with open("data/deadlines.json", "r", encoding="utf-8") as file:
-        data =  json.loads(file.read())
-        deadlines: list[Deadline] = []
-        for deadline in data:
-           deadlines.append(Deadline(deadline)) 
-        return deadlines
+        return json.loads(file.read())
+
+def json_to_deadlines(data) -> list[Deadline]:
+    """read the deadlines from file"""
+    deadlines: list[Deadline] = []
+    for deadline in data:
+        deadlines.append(Deadline(deadline)) 
+    return deadlines
 
 def sort_by_due(deadlines: list[Deadline], reverse: bool=False) -> list[Deadline]:
     """sort the deadlines in order of due date"""
