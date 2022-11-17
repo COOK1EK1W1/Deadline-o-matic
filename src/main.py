@@ -20,11 +20,12 @@ ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
 
 bot = commands.Bot(command_prefix=["."])
 
-started_announcements = False
+
 
 @bot.event
 async def on_ready():
     """when logged in"""
+    started_announcements = False
     print(f'We have logged in as {bot.user}')
     print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))

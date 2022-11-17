@@ -1,6 +1,7 @@
 import src.deadlines as dl
 import datetime
 import pytz
+import discord
 
 def test_init() -> None:
     d = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"EM250", "url":"google.com", "info":"lol this is a test"})
@@ -56,6 +57,12 @@ def test_due_in_() -> None:
 
     assert d_not_due.due_in_future()
     assert not d_not_due.due_in_past()
+
+def test_format_for_embed() -> None:
+    d_no_info = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-10-8 00:00", "mark":0, "room":"", "url":"", "info":""})
+    embed = discord.Embed(title="CW1 | F28PL", color=0xeb0000)
+    embed.add_field(name="Due", value="<t:1665187200:R>")
+    assert embed == d_no_info.format_for_embed()
 
 
 # def test_filter_after() -> None:
