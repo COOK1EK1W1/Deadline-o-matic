@@ -1,4 +1,5 @@
 import datetime
+from tabulate import tabulate
 import pytz
 import json
 import discord
@@ -178,6 +179,13 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
         colours = {"F28ED":":test_tube:", "F28PL":":keyboard:", "F28SG":":classical_building:", "F28WP":":globe_with_meridians:"}
         embed.add_field(name=f"{strike}{colours[deadline.subject]} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
     return embed
+
+def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
+    """convert all deadlines to a table in ascci format"""
+    deadline_matrix = []
+    for deadline in deadlines:
+        deadline_matrix.append(deadline.format_to_list())
+    return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```" 
 
 
 

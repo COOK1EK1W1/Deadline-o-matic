@@ -1,59 +1,11 @@
 """cog for handling deadline requests"""
 import datetime
-from typing import Optional
-import pytz
 import deadlines as dl
 
 from discord.ext import commands
 
-from tabulate import tabulate
 
 
-
-def calculate_progress(start: Optional[datetime.datetime], end: Optional[datetime.datetime]) -> Optional[float]:
-    """calculate current position in deadline"""
-    if start and end:
-        start_now = pytz.utc.localize(datetime.datetime.utcnow()) - start
-        start_end:datetime.timedelta = end - start
-        percent = start_now / start_end
-        return percent
-    return None
-
-def format_progress(percent: Optional[float]) -> str:
-    """Turn a percentage to text to be displayed"""
-    if not percent:
-        return "x"
-    if percent < 0:
-        return "----- not started -----"
-    elif percent > 1:
-        return "####### finished #######"
-    else :
-        return "#" * int(24 * percent) + "-" * int(24 - 24 * percent)
-
-
-def format_time_delta(delta: datetime.timedelta) -> str:
-    """format a delta time into 'x days y hours z minutes'"""
-    ##make strings of how long left
-    days = ""
-    if delta.days > 0:
-        days = str(delta.days) + " days"
-    hours = ""
-    if delta.seconds // 3600 > 0:
-        hours = " " + str((delta.seconds // 3600) % 24) + " hours"
-    minutes = ""
-    if delta.seconds // 60 > 0:
-        minutes = " " +str((delta.seconds // 60) % 60) + " minutes"
-
-    return days + hours + minutes
-
-
-
-def format_all_deadlines_to_string(deadlines: list[dl.Deadline]) -> str:
-    """convert all deadlines to a table in ascci format"""
-    deadline_matrix = []
-    for deadline in deadlines:
-        deadline_matrix.append(deadline.format_to_list())
-    return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```" 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
     """Deadline cog"""
@@ -101,7 +53,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def all_debug(self, ctx, *_):
         """displays all the deadlines and their sotred values for debugging"""
         deadlines = dl.get_deadlines()
-        await ctx.send(format_all_deadlines_to_string(deadlines))
+        await ctx.send(dl.format_all_deadlines_to_string(deadlines))
     
 
     @commands.command()
