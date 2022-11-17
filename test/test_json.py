@@ -1,4 +1,4 @@
-from src.deadlines import read_deadlines_to_json
+from src.deadlines import read_deadlines_to_json, Deadline
 import validators
 import datetime
 
@@ -44,3 +44,15 @@ def test_duplicates() -> None:
     for i, deadline in enumerate(data):
         for y in range(i+1, len(data)):
             assert not ((deadline["name"] == data[y]["name"]) and (deadline["subject"] == data[y]["subject"]))
+
+def test_all_convert_to_deadline() -> None:
+    data = read_deadlines_to_json()
+    for deadline in data:
+        Deadline(deadline)
+
+def test_due_after_start():
+    data = read_deadlines_to_json()
+    for deadline in data:
+        d = Deadline(deadline)
+        if d.start_datetime and d.due_datetime:
+            assert d.start_datetime < d.due_datetime
