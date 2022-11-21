@@ -105,3 +105,7 @@ def test_filter_after_now() -> None:
     a = dl.filter_due_after_now(deadlines)
     assert a == [deadlines[0], deadlines[3]]
 
+def test_dt() -> None:
+    a = dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"", "url":"", "info":""})
+    assert dl.dt(a.due_datetime, "f") == "<t:1666794600:f>"
+    assert dl.dt(a.due_datetime, "R") == "<t:1666794600:R>"

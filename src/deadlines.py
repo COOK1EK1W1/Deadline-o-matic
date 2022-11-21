@@ -82,9 +82,9 @@ class Deadline:
         if self.room:
             embed.add_field(name="Room", value=self.room, inline=False)
         if self.start_datetime:
-            embed.add_field(name="Start", value=self.due_datetime.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(self.start_datetime.timestamp())) + ":R>", inline=False)
+            embed.add_field(name="Start", value=dt(self.start_datetime, "F") + "\n" + dt(self.start_datetime, "R"), inline=False)
         if self.due_datetime:
-            embed.add_field(name="Due", value=self.due_datetime.strftime("%m/%d/%Y %H:%M") + "\n" + "<t:" + str(int(self.due_datetime.timestamp())) + ":R>", inline=False)
+            embed.add_field(name="Due", value=dt(self.due_datetime, "F") + "\n" + dt(self.due_datetime, "R"), inline=False)
         if self.info:
             embed.add_field(name="Info", value=self.info, inline=False) 
         return embed
@@ -110,6 +110,10 @@ class Deadline:
     def format_to_list(self):
         """format all the data to a list"""
         return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
+
+def dt(datetime: datetime.datetime, type: str):
+    """return a discord formatted datetime string. R for relative, F for day and time"""
+    return "<t:" + str(int(datetime.timestamp())) + ":" + type + ">"
 
 def read_deadlines_to_json():
     """read the deadlines from a file"""
@@ -159,12 +163,10 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
         start_date = deadline.start_datetime
 
         if due_date is not None:
-            due_timestamp = int(due_date.timestamp())
             if start_date is not None and start_date > pytz.utc.localize(datetime.datetime.utcnow()):
-                start_timestamp = int(start_date.timestamp())
-                time_until = " ~ starts <t:" + str(start_timestamp) + ":R>"
+                time_until = " ~ starts " + dt(start_date, "R")
             else:
-                time_until = " ~ due <t:" + str(due_timestamp) + ":R>"
+                time_until = " ~ due " + dt(due_date, "R")
         else: time_until = ""
             
         if due_date is not None:

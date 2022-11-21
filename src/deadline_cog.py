@@ -4,9 +4,6 @@ import deadlines as dl
 
 from discord.ext import commands
 
-
-
-
 class DeadlineCog(commands.Cog, name='Deadlines'):
     """Deadline cog"""
 
@@ -47,7 +44,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         if len(deadlines) == 0:
             await ctx.send("no deadlines :)")
             return
-        await ctx.send(embed=dl.format_deadlines_for_embed([deadlines[0]], "Next Deadline"))
+        await ctx.send(embed=deadlines[0].format_for_embed())
 
     @commands.command()
     async def all_debug(self, ctx, *_):
