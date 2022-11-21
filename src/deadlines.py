@@ -136,7 +136,7 @@ def filter_due_after(deadlines: list[Deadline], time: datetime.datetime) -> list
 
 def filter_due_before(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
     """keep dates which are before a certain times"""
-    return list(filter(lambda x: x.get_due_date_if_exsits() < x.timezone.localize(time), deadlines))
+    return list(filter(lambda x: x.get_due_date_if_exsits() <= x.timezone.localize(time), deadlines))
 
 def filter_due_after_now(deadlines: list[Deadline]) -> list[Deadline]:
     """keep dates which are due after now"""
@@ -176,7 +176,7 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
         if deadline.due_in_past():
             strike = "~~"
 
-        colours = {"F28ED":":test_tube:", "F28PL":":gabbay:", "F28SG":":classical_building:", "F28WP":":globe_with_meridians:"}
+        colours = {"F28ED":":test_tube:", "F28PL":":keyboard:", "F28SG":":classical_building:", "F28WP":":globe_with_meridians:"}
         embed.add_field(name=f"{strike}{colours[deadline.subject]} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)#beware the 0 width space thing used to make empty lines
     return embed
 

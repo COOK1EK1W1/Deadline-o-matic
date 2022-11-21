@@ -57,7 +57,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     
 
     @commands.command()
-    async def info(self, ctx, *a: tuple[str]):
+    async def info(self, ctx, *a):
         """display more info for a deadline, use .info next to see the next deadline"""
         deadlines = dl.get_deadlines()
         if a == ("next",):

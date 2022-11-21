@@ -58,17 +58,50 @@ def test_due_in_() -> None:
     assert d_not_due.due_in_future()
     assert not d_not_due.due_in_past()
 
-def test_format_for_embed() -> None:
-    d_no_info = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-10-8 00:00", "mark":0, "room":"", "url":"", "info":""})
-    embed = discord.Embed(title="CW1 | F28PL", color=0xeb0000)
-    embed.add_field(name="Due", value="<t:1665187200:R>")
-    assert embed == d_no_info.format_for_embed()
+# def test_format_for_embed() -> None:
+#     d_no_info = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-10-8 00:00", "mark":0, "room":"", "url":"", "info":""})
+#     embed = discord.Embed(title="CW1 | F28PL", color=0xeb0000)
+#     embed.add_field(name="Due", value="<t:1665187200:R>")
+#     assert embed == d_no_info.format_for_embed()
 
 
-# def test_filter_after() -> None:
-#     deadlines = [
-#         dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "2022-10-08 00:02", "due-datetime" : "2022-10-26 15:33", "mark":0.4, "room":"", "url":"", "info":""}),
-#         dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "2022-10-08 00:01", "due-datetime" : "2022-10-26 15:32", "mark":0.4, "room":"", "url":"", "info":""}),
-#         dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:31", "mark":0.4, "room":"", "url":"", "info":""})
-#     ]
-#     dl.filter_due_after(deadlines, deadlines[0].str_to_datetime("2022-10-08 00:00"))
+def test_filter_after() -> None:
+    deadlines = [
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:33", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:31", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"", "url":"", "info":""})
+    ]
+    a = dl.filter_due_after(deadlines, datetime.datetime.strptime("2022-10-26 15:32", "%Y-%m-%d %H:%M"))
+    assert a == [deadlines[0], deadlines[1]]
+
+def test_filter_before() -> None:
+    deadlines = [
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:33", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:31", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"", "url":"", "info":""})
+    ]
+    a = dl.filter_due_before(deadlines, datetime.datetime.strptime("2022-10-26 15:32", "%Y-%m-%d %H:%M"))
+    assert a == [deadlines[2], deadlines[3]]
+
+def test_filter_before_now() -> None:
+    deadlines = [
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : datetime.datetime.strftime((datetime.datetime.now() - datetime.timedelta(seconds=100)), "%Y-%m-%d %H:%M"), "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M"), "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : datetime.datetime.strftime((datetime.datetime.now() + datetime.timedelta(seconds=100)), "%Y-%m-%d %H:%M"), "mark":0.4, "room":"", "url":"", "info":""})
+    ]
+    a = dl.filter_due_before_now(deadlines)
+    assert a == [deadlines[1], deadlines[2]]
+
+def test_filter_after_now() -> None:
+    deadlines = [
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "", "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : datetime.datetime.strftime((datetime.datetime.now() - datetime.timedelta(seconds=100)), "%Y-%m-%d %H:%M"), "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M"), "mark":0.4, "room":"", "url":"", "info":""}),
+        dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : datetime.datetime.strftime((datetime.datetime.now() + datetime.timedelta(seconds=100)), "%Y-%m-%d %H:%M"), "mark":0.4, "room":"", "url":"", "info":""})
+    ]
+    a = dl.filter_due_after_now(deadlines)
+    assert a == [deadlines[0], deadlines[3]]
+
