@@ -85,6 +85,8 @@ class Deadline:
             embed.add_field(name="Start", value=dt(self.start_datetime, "F") + "\n" + dt(self.start_datetime, "R"), inline=False)
         if self.due_datetime:
             embed.add_field(name="Due", value=dt(self.due_datetime, "F") + "\n" + dt(self.due_datetime, "R"), inline=False)
+        else:
+            embed.add_field(name="Due", value="tbc")
         if self.info:
             embed.add_field(name="Info", value=self.info, inline=False) 
         return embed
@@ -101,9 +103,9 @@ class Deadline:
         if self.start_datetime is not None:
             return self.start_datetime
         else:
-            return self.timezone.localize(datetime.datetime.utcfromtimestamp(0))
+            return datetime.datetime.utcfromtimestamp(0)
     
-    def calculate_remaining_time(self)-> datetime.datetime:
+    def calculate_remaining_time(self)-> datetime.timedelta:
         """calculate the remaining time"""
         return self.get_due_date_if_exsits() - pytz.utc.localize(datetime.datetime.utcnow())
 

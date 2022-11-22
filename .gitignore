@@ -3,3 +3,5 @@ __pycache__
 token
 .DS_Store
 .coverage
+.vscode
+.pytest_cache

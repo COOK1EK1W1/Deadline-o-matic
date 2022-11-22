@@ -1,12 +1,13 @@
 import src.deadlines as dl
 import datetime
-import pytz
 import discord
 
 def test_init() -> None:
-    d = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"EM250", "url":"google.com", "info":"lol this is a test"})
+    d = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "2022-11-26 15:30", "due-datetime" : "2022-11-27 15:30", "mark":0.4, "room":"EM250", "url":"google.com", "info":"lol this is a test"})
     assert d.name == "CW1"
     assert d.subject == "F28PL"
+    assert int(d.start_datetime.timestamp()) == 1669476600
+    assert int(d.due_datetime.timestamp()) == 1669563000
     assert d.mark == 40
     assert d.room == "EM250"
     assert d.url == "google.com"
@@ -44,6 +45,11 @@ def test_announce_times_before_due() -> None:
     assert set(times_1530) == {d_1530.timezone.localize(datetime.datetime(2022, 10, 7, 15, 30)), d_1530.timezone.localize(datetime.datetime(2022, 10, 8, 15, 0))}
     assert set(times_no) == set()
 
+def test_str_to_datetime() -> None:
+    d = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-10-08 15:30", "mark":0, "room":"", "url":"", "info":""})
+    a = d.str_to_datetime("2022-10-08 15:30")
+    assert a.timestamp() == 1665239400
+
 
 def test_due_in_() -> None:
     d_due_in_past = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "", "due-datetime" : datetime.datetime.strftime((datetime.datetime.now() - datetime.timedelta(seconds=100)), "%Y-%m-%d %H:%M"), "mark":0, "room":"", "url":"", "info":""})
@@ -59,10 +65,11 @@ def test_due_in_() -> None:
     assert not d_not_due.due_in_past()
 
 # def test_format_for_embed() -> None:
-#     d_no_info = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-10-8 00:00", "mark":0, "room":"", "url":"", "info":""})
-#     embed = discord.Embed(title="CW1 | F28PL", color=0xeb0000)
-#     embed.add_field(name="Due", value="<t:1665187200:R>")
-#     assert embed == d_no_info.format_for_embed()
+#     d_no_info = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "", "due-datetime" : "2022-11-26 15:30", "mark":0, "room":"", "url":"", "info":""})
+#     embed = discord.Embed(title="CW1 | F28PL", url="", color=0xeb0000)
+#     embed.add_field(name="Due", value="<t:1669476600:F>\n<t:1669476600:R>", inline=False)
+#     assert embed.fields[0].__getattr__() == d_no_info.format_for_embed().fields[0].__getattr__()
+
 
 
 def test_filter_after() -> None:
@@ -106,6 +113,16 @@ def test_filter_after_now() -> None:
     assert a == [deadlines[0], deadlines[3]]
 
 def test_dt() -> None:
-    a = dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:30", "mark":0.4, "room":"", "url":"", "info":""})
+    a = dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "2022-10-26 15:30", "mark":0, "room":"", "url":"", "info":""})
     assert dl.dt(a.due_datetime, "f") == "<t:1666794600:f>"
     assert dl.dt(a.due_datetime, "R") == "<t:1666794600:R>"
+
+def test_date_exists() -> None:
+    a = dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "", "due-datetime" : "", "mark":0, "room":"", "url":"", "info":""})
+    b = dl.Deadline({"name":"1", "subject":"1", "start-datetime" : "2022-10-26 15:30", "due-datetime" : "2022-10-27 15:30", "mark":0, "room":"", "url":"", "info":""})
+
+    assert int(a.get_due_date_if_exsits().timestamp()) == int(dl.now().timestamp() + 60*60*24*365*100)
+    assert a.get_start_date_if_exsits().timestamp() == -3600
+
+    assert b.get_start_date_if_exsits().timestamp() == 1666794600
+    assert b.get_due_date_if_exsits().timestamp() == 1666881000
