@@ -4,6 +4,7 @@ import deadlines as dl
 
 from discord.ext import commands
 
+
 class DeadlineCog(commands.Cog, name='Deadlines'):
     """Deadline cog"""
 
@@ -11,7 +12,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def all(self, ctx, *_):
         """displays all the deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days= 7))
+        deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days=7))
         if len(deadlines) == 0:
             await ctx.send("no deadlines :)")
             return
@@ -41,7 +42,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def thisweek(self, ctx, *_):
         """displays all the deadlines this week"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_before(deadlines, dl.now() + datetime.timedelta(days= 6 - datetime.datetime.now().weekday()))
+        deadlines = dl.filter_due_before(deadlines, dl.now() + datetime.timedelta(days=6 - datetime.datetime.now().weekday()))
         deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days=datetime.datetime.now().weekday()))
         if len(deadlines) == 0:
             await ctx.send("no deadlines :)")
@@ -66,7 +67,6 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             await ctx.send("no deadlines :)")
             return
         await ctx.send(dl.format_all_deadlines_to_string(deadlines))
-    
 
     @commands.command()
     async def info(self, ctx, *a):
