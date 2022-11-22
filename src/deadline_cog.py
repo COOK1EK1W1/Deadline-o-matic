@@ -12,6 +12,9 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         """displays all the deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
         deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days= 7))
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
         await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
 
     @commands.command()
@@ -19,6 +22,9 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         """displays past deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
         deadlines = dl.filter_due_before_now(deadlines)
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
         await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines"))
 
     @commands.command()
@@ -26,6 +32,9 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         """display upcoming deadlines"""
         deadlines = dl.sort_by_due(dl.get_deadlines())
         deadlines = dl.filter_due_after_now(deadlines)[:8]
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
         await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Upcoming Deadlines"))
 
     @commands.command()
@@ -34,6 +43,9 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         deadlines = dl.sort_by_due(dl.get_deadlines())
         deadlines = dl.filter_due_before(deadlines, dl.now() + datetime.timedelta(days= 6 - datetime.datetime.now().weekday()))
         deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days=datetime.datetime.now().weekday()))
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
         await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Deadlines This Week"))
 
     @commands.command()
@@ -50,6 +62,9 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def all_debug(self, ctx, *_):
         """displays all the deadlines and their sotred values for debugging"""
         deadlines = dl.get_deadlines()
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
         await ctx.send(dl.format_all_deadlines_to_string(deadlines))
     
 

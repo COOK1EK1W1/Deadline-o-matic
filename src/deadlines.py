@@ -6,7 +6,7 @@ import discord
 from typing import Optional
 
 class Deadline:
-    def __init__(self, json: dict[str, str]):
+    def __init__(self, json: dict[str, str|float]):
         self.name = json['name']
         self.subject = json['subject']
         self.timezone = pytz.timezone("Europe/London")
@@ -117,17 +117,6 @@ def dt(datetime: datetime.datetime, type: str):
     """return a discord formatted datetime string. R for relative, F for day and time"""
     return "<t:" + str(int(datetime.timestamp())) + ":" + type + ">"
 
-def read_deadlines_to_json():
-    """read the deadlines from a file"""
-    with open("data/deadlines.json", "r", encoding="utf-8") as file:
-        return json.loads(file.read())
-
-def json_to_deadlines(data) -> list[Deadline]:
-    """read the deadlines from file"""
-    deadlines: list[Deadline] = []
-    for deadline in data:
-        deadlines.append(Deadline(deadline)) 
-    return deadlines
 
 def sort_by_due(deadlines: list[Deadline], reverse: bool=False) -> list[Deadline]:
     """sort the deadlines in order of due date"""
@@ -186,16 +175,24 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
 
 def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
     """convert all deadlines to a table in ascci format"""
-    deadline_matrix = []
+    deadline_matrix: list[str|float|datetime.timedelta] = []
     for deadline in deadlines:
         deadline_matrix.append(deadline.format_to_list())
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```" 
 
+def read_deadlines_to_json():
+    """read the deadlines from a file"""
+    with open("data/deadlines.json", "r", encoding="utf-8") as file:
+        return json.loads(file.read())
+
+def json_to_deadlines(data: list[dict[str, str|float]]) -> list[Deadline]:
+    """read the deadlines from file"""
+    deadlines: list[Deadline] = []
+    for deadline in data:
+        deadlines.append(Deadline(deadline)) 
+    return deadlines
+
 def get_deadlines() -> list[Deadline]:
     """read the deadlines from file"""
-    with open("data/deadlines.json", "r", encoding="utf-8") as file:
-        data =  json.loads(file.read())
-        deadlines: list[Deadline] = []
-        for deadline in data:
-           deadlines.append(Deadline(deadline)) 
-        return deadlines
+    data = read_deadlines_to_json()
+    return json_to_deadlines(data)
