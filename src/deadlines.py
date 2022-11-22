@@ -199,11 +199,3 @@ def get_deadlines() -> list[Deadline]:
         for deadline in data:
            deadlines.append(Deadline(deadline)) 
         return deadlines
-
-def main():
-    deadlines = get_deadlines()
-    sort_by_due(deadlines)
-    print(deadlines)
-
-if __name__ == "__main__":
-    main()

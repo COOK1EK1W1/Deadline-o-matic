@@ -13,6 +13,9 @@ def test_init() -> None:
     assert d.url == "google.com"
     assert d.info == "lol this is a test"
 
+def test_get_deadlines() -> None:
+    assert type(dl.get_deadlines()) == list
+
 def test_announce_times_before_start() -> None:
     d_0000 = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "2022-10-08 00:00", "due-datetime" : "2022-10-26 15:30", "mark":0, "room":"", "url":"", "info":""})
     d_2359 = dl.Deadline({"name":"CW1", "subject":"F28PL", "start-datetime" : "2022-10-07 23:59", "due-datetime" : "2022-10-26 15:30", "mark":0, "room":"", "url":"", "info":""})
