@@ -7,11 +7,10 @@ import deadlines
 import asyncio
 import datetime
 import pytz
-import deadlines as dl
 
 from deadline_cog import DeadlineCog
 
-#environment variables
+# environment variables
 TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN:
     raise Exception("No discord token provided")
@@ -21,7 +20,6 @@ ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
 bot = commands.Bot(command_prefix=["."])
 
 
-
 @bot.event
 async def on_ready():
     """when logged in"""
@@ -29,7 +27,7 @@ async def on_ready():
     print(f'We have logged in as {bot.user}')
     print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
-    
+
     if ANNOUNCE_CHANNEL is None:
         print("no announcement channel, anouncements disabled")
         return
@@ -38,7 +36,7 @@ async def on_ready():
         print("announcements already stated, must have reconnected")
         return
 
-    ###announcement scheduling
+    # announcement scheduling
     async def announce_deadline(deadline: deadlines.Deadline):
         before_start = deadline.calculate_announce_before_start()
         before_due = deadline.calculate_announce_before_due()
@@ -53,8 +51,9 @@ async def on_ready():
                 continue
 
             print("adding announcement for " + deadline.name + " scheduled at " + str(announce_at))
-            await asyncio.sleep(seconds_until_announce) #sleep until it has to send the announcement
-            await channel.send(deadline.name + " starts " + f"<t:{int(deadline_start_at.timestamp())}:R>")
+            await asyncio.sleep(seconds_until_announce)  # sleep until it has to send the announcement
+            embed = deadline.format_for_embed()
+            await channel.send(deadline.name + " starts " + f"<t:{int(deadline_start_at.timestamp())}:R>", embed=embed)
 
         for announce_at in before_due:
 
@@ -64,13 +63,12 @@ async def on_ready():
                 continue
 
             print("adding announcement for " + deadline.name + " scheduled at " + str(announce_at))
-            await asyncio.sleep(seconds_until_announce) #sleep until it has to send the announcement
+            await asyncio.sleep(seconds_until_announce)  # sleep until it has to send the announcement
             embed = deadline.format_for_embed()
             await channel.send(deadline.name + " is due " + f"<t:{int(deadline_due_at.timestamp())}:R>", embed=embed)
 
-
     loop = asyncio.get_event_loop()
-    ##run all the announcements
+    # run all the announcements
     for deadline in deadlines.get_deadlines():
         loop.create_task(announce_deadline(deadline))
     started_announcements = True
