@@ -52,7 +52,8 @@ async def on_ready(started_announcements=False):
 
             print("adding announcement for " + deadline.name + " scheduled at " + str(announce_at))
             await asyncio.sleep(seconds_until_announce)  # sleep until it has to send the announcement
-            await channel.send(deadline.name + " starts " + f"<t:{int(deadline_start_at.timestamp())}:R>")
+            embed = deadline.format_for_embed()
+            await channel.send(deadline.name + " starts " + f"<t:{int(deadline_start_at.timestamp())}:R>", embed=embed)
 
         for announce_at in before_due:
 
