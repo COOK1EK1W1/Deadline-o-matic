@@ -21,9 +21,9 @@ bot = commands.Bot(command_prefix=["."])
 
 
 @bot.event
-async def on_ready():
+async def on_ready(started_announcements=False):
     """when logged in"""
-    started_announcements = False
+    
     print(f'We have logged in as {bot.user}')
     print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
