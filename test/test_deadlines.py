@@ -133,7 +133,7 @@ def test_date_exists() -> None:
     b = dl.Deadline({"name": "1", "subject": "1", "start-datetime": "2022-10-26 15:30", "due-datetime": "2022-10-27 15:30", "mark": 0, "room": "", "url": "", "info": ""})
 
     assert int(a.get_due_date_if_exsits().timestamp()) == int(dl.now().timestamp() + 60 * 60 * 24 * 365 * 100)
-    assert a.get_start_date_if_exsits().timestamp() == -3600
+    assert a.get_start_date_if_exsits().timestamp() == 0.0
 
     assert b.get_start_date_if_exsits().timestamp() == 1666794600
     assert b.get_due_date_if_exsits().timestamp() == 1666881000

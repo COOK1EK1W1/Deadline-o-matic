@@ -105,7 +105,7 @@ class Deadline:
         if self.start_datetime is not None:
             return self.start_datetime
         else:
-            return datetime.datetime.utcfromtimestamp(0)
+            return datetime.datetime.fromtimestamp(0)
 
     def calculate_remaining_time(self) -> datetime.timedelta:
         """calculate the remaining time"""
