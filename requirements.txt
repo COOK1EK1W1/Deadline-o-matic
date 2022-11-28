@@ -20,9 +20,11 @@ pyflakes==2.5.0
 PyNaCl==1.4.0
 pyparsing==3.0.9
 pytest==7.2.0
+pytest-asyncio==0.20.2
 pytest-cov==4.0.0
 pytz==2022.5
 six==1.16.0
+smart-match==0.1.1
 tabulate==0.9.0
 tomli==2.0.1
 typing_extensions==4.0.1

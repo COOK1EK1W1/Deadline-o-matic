@@ -4,11 +4,12 @@ import pytz
 import json
 import discord
 from typing import Optional
+import smart_match
 
 
 class Deadline:
     def __init__(self, json: dict[str, str | float]):
-        self.name = json['name']
+        self.name: str = json['name']
         self.subject = json['subject']
         self.timezone = pytz.timezone("Europe/London")
 
@@ -207,3 +208,9 @@ def get_deadlines() -> list[Deadline]:
     """read the deadlines from file"""
     data = read_deadlines_to_json()
     return json_to_deadlines(data)
+
+
+def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline:
+    results = [[smart_match.similarity(match_string, x.name), x] for x in deadlines]
+    results.sort(key=lambda x: x[0], reverse=True)
+    return results[0][1]

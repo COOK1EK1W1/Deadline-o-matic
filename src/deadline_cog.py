@@ -77,6 +77,5 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             deadline = dl.filter_due_after_now(deadlines)[0]
             await ctx.send(embed=deadline.format_for_embed())
         else:
-            for x in deadlines:
-                if x.name == " ".join(a):
-                    await ctx.send(embed=x.format_for_embed())
+            best_match = dl.get_best_match(deadlines, " ".join(a))
+            await ctx.send(embed=best_match.format_for_embed())
