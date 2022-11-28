@@ -11,7 +11,7 @@ def test_read_deadlines_to_json() -> None:
 
 def test_json_to_deadline() -> None:
     json = {"name": "CW1 Python", "subject": "F28PL", "start-datetime": "2022-10-08 00:00", "due-datetime": "2022-10-26 15:30", "mark": 0.4, "room": "", "url": "", "info": ""},\
-            {"name": "CW2 OCaml", "subject": "F28PL", "start-datetime": "", "due-datetime": "", "mark": 0.4, "room": "", "url": "", "info": "lol"}
+        {"name": "CW2 OCaml", "subject": "F28PL", "start-datetime": "", "due-datetime": "", "mark": 0.4, "room": "", "url": "", "info": "lol"}
     result = json_to_deadlines(json)
     assert result[0].name == "CW1 Python"
     assert result[0].subject == "F28PL"
