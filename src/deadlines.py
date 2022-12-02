@@ -162,14 +162,9 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
 
         if due_date is not None:
             if start_date is not None and start_date > pytz.utc.localize(datetime.datetime.utcnow()):
-                time_until = " ~ starts " + dt(start_date, "R")
+                date_string = "starts " + dt(start_date, "F") + " ~ " + dt(start_date, "R")
             else:
-                time_until = " ~ due " + dt(due_date, "R")
-        else:
-            time_until = ""
-
-        if due_date is not None:
-            date_string = due_date.strftime("%a, %d %b %H:%M") + time_until
+                date_string = "due " + dt(due_date, "F") + " ~ " + dt(due_date, "R")
         else:
             date_string = "tbc"
 
