@@ -8,9 +8,11 @@ Desiged by Ciaran for the Heriot Watt year 2 discord server
 - `.past` will display deadlines that are in the past
 - `.upcoming` will show all deadlines which have not finished
 - `.next` will show the next deadline
+- `.info <name>` will show info of the deadline, for the best match of the search term
 
 
 ## How to run the bot
+requires python >3.10
 1. clone the repository
 
 2. cd into the repository directory
