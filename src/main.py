@@ -7,6 +7,7 @@ import deadlines
 import asyncio
 import datetime
 import pytz
+from sql_interface import q_deadlines
 
 from deadline_cog import DeadlineCog
 
@@ -69,7 +70,7 @@ async def on_ready(started_announcements=False):
 
     loop = asyncio.get_event_loop()
     # run all the announcements
-    for deadline in deadlines.get_deadlines():
+    for deadline in q_deadlines("SELECT * FROM deadlinebot.deadlines WHERE due > CURRENT_DATE()"):
         loop.create_task(announce_deadline(deadline))
     started_announcements = True
 

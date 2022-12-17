@@ -124,32 +124,6 @@ def dt(datetime: datetime.datetime, type: str):
     return "<t:" + str(int(datetime.timestamp())) + ":" + type + ">"
 
 
-def sort_by_due(deadlines: list[Deadline], reverse: bool = False) -> list[Deadline]:
-    """sort the deadlines in order of due date"""
-    deadlines.sort(key=lambda x: x.get_due_date_if_exsits(), reverse=reverse)
-    return deadlines
-
-
-def filter_due_after(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
-    """keep dates which are after a certain time"""
-    return list(filter(lambda x: x.get_due_date_if_exsits() > x.timezone.localize(time), deadlines))
-
-
-def filter_due_before(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
-    """keep dates which are before a certain times"""
-    return list(filter(lambda x: x.get_due_date_if_exsits() <= x.timezone.localize(time), deadlines))
-
-
-def filter_due_after_now(deadlines: list[Deadline]) -> list[Deadline]:
-    """keep dates which are due after now"""
-    return list(filter(lambda x: x.due_in_future(), deadlines))
-
-
-def filter_due_before_now(deadlines: list[Deadline]) -> list[Deadline]:
-    """keep dates which are due before now"""
-    return list(filter(lambda x: x.due_in_past(), deadlines))
-
-
 def now() -> datetime.datetime:
     """shortcut for datetime of now"""
     return datetime.datetime.now()
@@ -176,7 +150,7 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
             strike = "~~"
 
         colours = {"F28ED": ":test_tube:", "F28PL": ":keyboard:", "F28SG": ":classical_building:", "F28WP": ":globe_with_meridians:"}
-        embed.add_field(name=f"{strike}{colours[deadline.subject]} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)  # beware the 0 width space thing used to make empty lines
+        embed.add_field(name=f"{strike}{colours.get(deadline.subject)} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)  # beware the 0 width space thing used to make empty lines
     return embed
 
 
@@ -186,14 +160,6 @@ def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
     for deadline in deadlines:
         deadline_matrix.append(deadline.format_to_list())
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```"
-
-
-def get_deadlines() -> list[Deadline]:
-    """read the deadlines from file"""
-    data = query("SELECT * from deadlines")
-    if data is None:
-      return []
-    return [Deadline(x) for x in data]
 
 
 def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline:
