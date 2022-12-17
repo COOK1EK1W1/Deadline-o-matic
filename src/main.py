@@ -18,13 +18,19 @@ if not TOKEN:
 
 ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
 
-bot = commands.Bot(command_prefix=["."])
+intents = discord.Intents.default()
+intents.message_content = True
+intents.typing = False
+intents.presences = False
+
+bot = commands.Bot(intents=intents, command_prefix=".")
 
 
 @bot.event
 async def on_ready(started_announcements=False):
     """when logged in"""
 
+    await bot.add_cog(DeadlineCog(bot))
     print(f'We have logged in as {bot.user}')
     print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
@@ -75,5 +81,5 @@ async def on_ready(started_announcements=False):
     started_announcements = True
 
 
-bot.add_cog(DeadlineCog(bot))
+
 bot.run(TOKEN)
