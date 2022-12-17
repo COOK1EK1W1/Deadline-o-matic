@@ -1,9 +1,6 @@
 """cog for handling deadline requests"""
-import datetime
 import deadlines as dl
-
 from discord.ext import commands
-
 from sql_interface import query, q_deadlines
 
 

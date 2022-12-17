@@ -13,19 +13,21 @@ if not (HOST and USER and PASS and NAME):
     raise Exception("missing DB info")
 
 db = mysql.connector.connect(
-  host=HOST,
-  user=USER,
-  password=PASS,
-  database=NAME
+    host=HOST,
+    user=USER,
+    password=PASS,
+    database=NAME
 )
 
 cursor = db.cursor(prepared=True)
+
 
 def query(query, params=()):
     cursor.execute(query, params)
     result = cursor.fetchall()
     db.commit()
     return result
+
 
 def q_deadlines(query, params=()):
     cursor.execute(query, params)
