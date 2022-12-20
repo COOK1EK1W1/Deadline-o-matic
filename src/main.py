@@ -7,6 +7,8 @@ import deadlines
 import asyncio
 import datetime
 import pytz
+import sched, time
+import deadlines as dl
 
 from deadline_cog import DeadlineCog
 
@@ -19,6 +21,7 @@ ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
 
 bot = commands.Bot(command_prefix=["."])
 
+s = sched.scheduler(time.time, time.sleep)
 
 @bot.event
 async def on_ready(started_announcements=False):
@@ -36,42 +39,24 @@ async def on_ready(started_announcements=False):
         print("announcements already stated, must have reconnected")
         return
 
-    # announcement scheduling
-    async def announce_deadline(deadline: deadlines.Deadline):
-        before_start = deadline.calculate_announce_before_start()
-        before_due = deadline.calculate_announce_before_due()
-        deadline_start_at = deadline.start_datetime
-        deadline_due_at = deadline.due_datetime
-        channel = bot.get_channel(int(ANNOUNCE_CHANNEL))
-        for announce_at in before_start:
+    async def send_announcement(deadline: dl.Deadline, channel, for_time: datetime.datetime):
+        embed = deadline.format_for_embed()
+        await channel.send(deadline.name + " is due " + dl.dt(for_time, "t"), embed=embed)
 
-            seconds_until_announce = (announce_at - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds()
-
-            if seconds_until_announce < 0:
-                continue
-
-            print("adding announcement for " + deadline.name + " scheduled at " + str(announce_at))
-            await asyncio.sleep(seconds_until_announce)  # sleep until it has to send the announcement
-            embed = deadline.format_for_embed()
-            await channel.send(deadline.name + " starts " + f"<t:{int(deadline_start_at.timestamp())}:R>", embed=embed)
-
-        for announce_at in before_due:
-
-            seconds_until_announce = (announce_at - pytz.utc.localize(datetime.datetime.utcnow())).total_seconds()
-
-            if seconds_until_announce < 0:
-                continue
-
-            print("adding announcement for " + deadline.name + " scheduled at " + str(announce_at))
-            await asyncio.sleep(seconds_until_announce)  # sleep until it has to send the announcement
-            embed = deadline.format_for_embed()
-            await channel.send(deadline.name + " is due " + f"<t:{int(deadline_due_at.timestamp())}:R>", embed=embed)
-
-    loop = asyncio.get_event_loop()
     # run all the announcements
     for deadline in deadlines.get_deadlines():
-        loop.create_task(announce_deadline(deadline))
+        for announce_time_start in deadline.calculate_announce_before_start():
+            if announce_time_start < deadline.timezone.localize(datetime.datetime.utcnow()):
+                continue
+            s.enterabs(announce_time_start.timestamp(), 1, send_announcement, (deadline, ANNOUNCE_CHANNEL, deadline.start_datetime))
+            print(deadline.name + " scheduled for announece before start at " + str(announce_time_start))
+        for announce_time_due in deadline.calculate_announce_before_due():
+            if announce_time_due < deadline.timezone.localize(datetime.datetime.utcnow()):
+                continue
+            s.enterabs(announce_time_due.timestamp(), 1, send_announcement, (deadline, ANNOUNCE_CHANNEL, deadline.due_datetime))
+            print(deadline.name + " scheduled for announece before due at " + str(announce_time_due))
     started_announcements = True
+    s.run()
 
 
 bot.add_cog(DeadlineCog(bot))

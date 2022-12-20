@@ -1,24 +1,23 @@
 import datetime
 from tabulate import tabulate
 import pytz
-import json
 import discord
 from typing import Optional
 import smart_match
-
+from sql_interface import query
 
 class Deadline:
-    def __init__(self, json: dict[str, str | float]):
-        self.name: str = json['name']
-        self.subject = json['subject']
+    def __init__(self, data: tuple):
+        self.name: str = data[0]
+        self.subject = data[1]
         self.timezone = pytz.timezone("Europe/London")
 
-        self.start_datetime = self.str_to_datetime(json['start-datetime'])
-        self.due_datetime = self.str_to_datetime(json['due-datetime'])
-        self.room = json['room']
-        self.url = json['url']
-        self.mark = int(json['mark'] * 100)
-        self.info = json['info']
+        self.start_datetime = localise(data[2], self.timezone)
+        self.due_datetime = localise(data[3], self.timezone)
+        self.mark = int(data[4])
+        self.room = data[5]
+        self.url = data[6]
+        self.info = data[7]
 
     def calculate_announce_before_due(self) -> list[datetime.datetime]:
         """calculate the times at which an announement should be made before the due time"""
@@ -63,10 +62,10 @@ class Deadline:
 
     def str_to_datetime(self, datetime_str: str) -> Optional[datetime.datetime]:
         """convert a string to a datetime"""
-        if datetime_str == "":
+        if datetime_str is None:
             return None
         else:
-            return self.timezone.localize(datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M"))
+            return self.timezone.localize(datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S"))
 
     def due_in_future(self) -> bool:
         """test if the deadline is due in the future"""
@@ -115,6 +114,10 @@ class Deadline:
         """format all the data to a list"""
         return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
 
+def localise(dt, tz):
+    if dt is None:
+        return None
+    return tz.localize(dt)
 
 def dt(datetime: datetime.datetime, type: str):
     """return a discord formatted datetime string. R for relative, F for day and time"""
@@ -185,24 +188,12 @@ def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```"
 
 
-def read_deadlines_to_json():
-    """read the deadlines from a file"""
-    with open("data/deadlines.json", "r", encoding="utf-8") as file:
-        return json.loads(file.read())
-
-
-def json_to_deadlines(data: list[dict[str, str | float]]) -> list[Deadline]:
-    """read the deadlines from file"""
-    deadlines: list[Deadline] = []
-    for deadline in data:
-        deadlines.append(Deadline(deadline))
-    return deadlines
-
-
 def get_deadlines() -> list[Deadline]:
     """read the deadlines from file"""
-    data = read_deadlines_to_json()
-    return json_to_deadlines(data)
+    data = query("SELECT * from deadlines")
+    if data is None:
+      return []
+    return [Deadline(x) for x in data]
 
 
 def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline:
