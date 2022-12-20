@@ -2,9 +2,8 @@ import datetime
 from tabulate import tabulate
 import pytz
 import discord
-from typing import Optional
 import smart_match
-from sql_interface import query
+
 
 class Deadline:
     def __init__(self, data: tuple):
@@ -14,7 +13,7 @@ class Deadline:
 
         self.start_datetime = localise(data[2], self.timezone)
         self.due_datetime = localise(data[3], self.timezone)
-        self.mark = int(data[4])
+        self.mark = int(data[4]*100)
         self.room = data[5]
         self.url = data[6]
         self.info = data[7]
@@ -59,13 +58,6 @@ class Deadline:
                 time_at_announce = time_at_announce.replace(hour=18, minute=0)
             announce_times_before_start.append(time_at_announce)
         return announce_times_before_start
-
-    def str_to_datetime(self, datetime_str: str) -> Optional[datetime.datetime]:
-        """convert a string to a datetime"""
-        if datetime_str is None:
-            return None
-        else:
-            return self.timezone.localize(datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S"))
 
     def due_in_future(self) -> bool:
         """test if the deadline is due in the future"""
@@ -114,45 +106,16 @@ class Deadline:
         """format all the data to a list"""
         return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
 
+
 def localise(dt, tz):
     if dt is None:
         return None
     return tz.localize(dt)
 
+
 def dt(datetime: datetime.datetime, type: str):
     """return a discord formatted datetime string. R for relative, F for day and time"""
     return "<t:" + str(int(datetime.timestamp())) + ":" + type + ">"
-
-
-def sort_by_due(deadlines: list[Deadline], reverse: bool = False) -> list[Deadline]:
-    """sort the deadlines in order of due date"""
-    deadlines.sort(key=lambda x: x.get_due_date_if_exsits(), reverse=reverse)
-    return deadlines
-
-
-def filter_due_after(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
-    """keep dates which are after a certain time"""
-    return list(filter(lambda x: x.get_due_date_if_exsits() > x.timezone.localize(time), deadlines))
-
-
-def filter_due_before(deadlines: list[Deadline], time: datetime.datetime) -> list[Deadline]:
-    """keep dates which are before a certain times"""
-    return list(filter(lambda x: x.get_due_date_if_exsits() <= x.timezone.localize(time), deadlines))
-
-
-def filter_due_after_now(deadlines: list[Deadline]) -> list[Deadline]:
-    """keep dates which are due after now"""
-    return list(filter(lambda x: x.due_in_future(), deadlines))
-
-
-def filter_due_before_now(deadlines: list[Deadline]) -> list[Deadline]:
-    """keep dates which are due before now"""
-    return list(filter(lambda x: x.due_in_past(), deadlines))
-
-
-def now() -> datetime.datetime:
-    """shortcut for datetime of now"""
-    return datetime.datetime.now()
 
 
 def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> discord.Embed:
@@ -165,7 +128,7 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
 
         if due_date is not None:
             if start_date is not None and start_date > pytz.utc.localize(datetime.datetime.utcnow()):
-                date_string = "starts " + start_date.strftime("%a, %d %b %H:%M")  + " ~ " + dt(start_date, "R")
+                date_string = "starts " + start_date.strftime("%a, %d %b %H:%M") + " ~ " + dt(start_date, "R")
             else:
                 date_string = "due " + due_date.strftime("%a, %d %b %H:%M") + " ~ " + dt(due_date, "R")
         else:
@@ -176,7 +139,7 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
             strike = "~~"
 
         colours = {"F28ED": ":test_tube:", "F28PL": ":keyboard:", "F28SG": ":classical_building:", "F28WP": ":globe_with_meridians:"}
-        embed.add_field(name=f"{strike}{colours[deadline.subject]} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)  # beware the 0 width space thing used to make empty lines
+        embed.add_field(name=f"{strike}{colours.get(deadline.subject)} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)  # beware the 0 width space thing used to make empty lines
     return embed
 
 
@@ -186,14 +149,6 @@ def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
     for deadline in deadlines:
         deadline_matrix.append(deadline.format_to_list())
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```"
-
-
-def get_deadlines() -> list[Deadline]:
-    """read the deadlines from file"""
-    data = query("SELECT * from deadlines")
-    if data is None:
-      return []
-    return [Deadline(x) for x in data]
 
 
 def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline:
