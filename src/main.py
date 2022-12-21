@@ -7,7 +7,7 @@ import deadlines
 import asyncio
 import datetime
 import pytz
-import sched, time
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import deadlines as dl
 from sql_interface import q_deadlines
 
@@ -27,8 +27,6 @@ intents.presences = False
 
 bot = commands.Bot(intents=intents, command_prefix=".")
 
-s = sched.scheduler(time.time, time.sleep)
-
 @bot.event
 async def on_ready(started_announcements=False):
     """when logged in"""
@@ -46,15 +44,30 @@ async def on_ready(started_announcements=False):
         print("announcements already stated, must have reconnected")
         return
 
-    async def send_announcement(deadline: dl.Deadline, channel, for_time: datetime.datetime):
+    async def send_announcement_start(deadline: dl.Deadline, channel, for_time: datetime.datetime):
+        embed = deadline.format_for_embed()
+        await channel.send(deadline.name + " starts " + dl.dt(for_time, "t"), embed=embed)
+        
+    async def send_announcement_due(deadline: dl.Deadline, channel, for_time: datetime.datetime):
+        print("bruh")
         embed = deadline.format_for_embed()
         await channel.send(deadline.name + " is due " + dl.dt(for_time, "t"), embed=embed)
 
+    scheduler = AsyncIOScheduler()
+
     # run all the announcements
     for deadline in q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()"):
-        loop.create_task(announce_deadline(deadline))
+        for x in deadline.calculate_announce_before_start():
+            if x > deadline.timezone.localize(datetime.datetime.utcnow()):
+                scheduler.add_job(send_announcement_start, 'date', run_date=x, args=(deadline, bot.get_channel(int(ANNOUNCE_CHANNEL)), x))
+
+        for x in deadline.calculate_announce_before_due():
+            if x > deadline.timezone.localize(datetime.datetime.utcnow()):
+                scheduler.add_job(send_announcement_due, 'date', run_date=x, args=(deadline, bot.get_channel(int(ANNOUNCE_CHANNEL)), x))
+            
+
+    scheduler.start()
     started_announcements = True
 
 
-bot.add_cog(DeadlineCog(bot))
 bot.run(TOKEN)
