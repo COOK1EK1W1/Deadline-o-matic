@@ -19,7 +19,12 @@ if not TOKEN:
 
 ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
 
-bot = commands.Bot(command_prefix=["."])
+intents = discord.Intents.default()
+intents.message_content = True
+intents.typing = False
+intents.presences = False
+
+bot = commands.Bot(intents=intents, command_prefix=".", application_id="1026458152817918012")
 
 s = sched.scheduler(time.time, time.sleep)
 
@@ -27,6 +32,7 @@ s = sched.scheduler(time.time, time.sleep)
 async def on_ready(started_announcements=False):
     """when logged in"""
     
+    await bot.add_cog(DeadlineCog(bot), guilds=[discord.Object(id=597140025582419976)])
     print(f'We have logged in as {bot.user}')
     print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
@@ -59,5 +65,5 @@ async def on_ready(started_announcements=False):
     s.run()
 
 
-bot.add_cog(DeadlineCog(bot))
+
 bot.run(TOKEN)
