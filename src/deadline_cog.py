@@ -78,7 +78,6 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @commands.command()
     async def add(self, ctx, *, args=None):
         args = args.split("-")
-        print(args)
         if len(args) < 2:
             return
 
@@ -111,3 +110,4 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         query("""INSERT INTO deadlines
 (name, subject, `start`, due, mark, room, url, info)
 VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, room, url, info))
+        print(args)

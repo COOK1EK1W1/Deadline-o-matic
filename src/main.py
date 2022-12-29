@@ -33,7 +33,6 @@ async def on_ready(started_announcements=False):
 
     await bot.add_cog(DeadlineCog(bot))
     print(f'We have logged in as {bot.user}')
-    print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
 
     if ANNOUNCE_CHANNEL is None:
@@ -49,7 +48,6 @@ async def on_ready(started_announcements=False):
         await channel.send(deadline.name + " starts " + dl.dt(for_time, "t"), embed=embed)
         
     async def send_announcement_due(deadline: dl.Deadline, channel, for_time: datetime.datetime):
-        print("bruh")
         embed = deadline.format_for_embed()
         await channel.send(deadline.name + " is due " + dl.dt(for_time, "t"), embed=embed)
 
