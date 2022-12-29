@@ -1,11 +1,10 @@
 """cog for handling deadline requests"""
-import datetime
 import deadlines as dl
-
 from discord.ext import commands
 import discord
 
 from discord import app_commands
+from sql_interface import query, q_deadlines
 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
@@ -21,8 +20,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="all", description="display all the deadlines")
     async def all(self, interaction: discord.Interaction) -> None:
         """displays all the deadlines"""
-        deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days=7))
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -38,8 +36,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command()
     async def past(self, interaction: discord.Interaction):
         """displays past deadlines"""
-        deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_before_now(deadlines)
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_DATE()")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -48,8 +45,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command()
     async def upcoming(self, interaction: discord.Interaction):
         """display upcoming deadlines"""
-        deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_after_now(deadlines)[:8]
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")[:8]
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -58,9 +54,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command()
     async def thisweek(self, interaction: discord.Interaction):
         """displays all the deadlines this week"""
-        deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_before(deadlines, dl.now() + datetime.timedelta(days=6 - datetime.datetime.now().weekday()))
-        deadlines = dl.filter_due_after(deadlines, dl.now() - datetime.timedelta(days=datetime.datetime.now().weekday()))
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE YEARWEEK(due, 1) = YEARWEEK(CURDATE(), 1)")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -69,8 +63,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command()
     async def next(self, interaction: discord.Interaction):
         """displays next deadline"""
-        deadlines = dl.sort_by_due(dl.get_deadlines())
-        deadlines = dl.filter_due_after_now(deadlines)
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -79,23 +72,99 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command()
     async def all_debug(self, interaction: discord.Interaction):
         """displays all the deadlines and their sotred values for debugging"""
-        deadlines = dl.get_deadlines()
+        deadlines = q_deadlines("SELECT * FROM deadlines")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
         await interaction.response.send_message(dl.format_all_deadlines_to_string(deadlines))
 
     @app_commands.command()
-    async def info(self, interation: discord.Interaction, searchTerm: str):
+    async def info(self, interation: discord.Interaction, searchterm: str):
         """display more info for a deadline, use .info next to see the next deadline"""
-        deadlines = dl.get_deadlines()
-        if searchTerm == ("next",):
-            deadlines = dl.sort_by_due(deadlines)
-            deadline = dl.filter_due_after_now(deadlines)[0]
-            await interation.response.send_message(embed=deadline.format_for_embed())
+        if searchterm == ("next",):
+            deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")
+            if len(deadlines) == 0:
+                await interation.response.send_message("no deadlines :)")
+            else:
+                await interation.response.send_message(embed=deadlines[0].format_for_embed())
         else:
-            best_match = dl.get_best_match(deadlines, " ".join(searchTerm))
+            deadlines = q_deadlines("SELECT * FROM deadlines")
+            best_match = dl.get_best_match(deadlines, " ".join(searchterm))
             if best_match is None:
                 await interation.response.send_message("no deadlines :)")
                 return
             await interation.response.send_message(embed=best_match.format_for_embed())
+
+    @commands.command()
+    async def add(self, ctx, *, args=None):
+        args = args.split("-")
+        if len(args) < 2:
+            return
+
+        name = ""
+        course = ""
+        start = None
+        due = None
+        mark = 0
+        room = ""
+        url = ""
+        info = ""
+        for i in range(0, len(args)):
+            if args[i][:2] == "n=":
+                name = args[i][2:]
+            elif args[i][:2] == "c=":
+                course = args[i][2:]
+            elif args[i][:2] == "s=":
+                start = args[i][2:]
+            elif args[i][:2] == "d=":
+                due = args[i][2:]
+            elif args[i][:2] == "m=":
+                mark = args[i][2:]
+            elif args[i][:2] == "r=":
+                room = args[i][2:]
+            elif args[i][:2] == "u=":
+                url = args[i][2:]
+            elif args[i][:2] == "i=":
+                info = args[i][2:]
+
+        query("""INSERT INTO deadlines
+(name, subject, `start`, due, mark, room, url, info)
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, room, url, info))
+        print(args)
+
+    @commands.command()
+    async def add(self, ctx, *, args=None):
+        args = args.split("-")
+        if len(args) < 2:
+            return
+
+        name = ""
+        course = ""
+        start = None
+        due = None
+        mark = 0
+        room = ""
+        url = ""
+        info = ""
+        for i in range(0, len(args)):
+            if args[i][:2] == "n=":
+                name = args[i][2:]
+            elif args[i][:2] == "c=":
+                course = args[i][2:]
+            elif args[i][:2] == "s=":
+                start = args[i][2:]
+            elif args[i][:2] == "d=":
+                due = args[i][2:]
+            elif args[i][:2] == "m=":
+                mark = args[i][2:]
+            elif args[i][:2] == "r=":
+                room = args[i][2:]
+            elif args[i][:2] == "u=":
+                url = args[i][2:]
+            elif args[i][:2] == "i=":
+                info = args[i][2:]
+
+        query("""INSERT INTO deadlines
+(name, subject, `start`, due, mark, room, url, info)
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, room, url, info))
+        print(args)

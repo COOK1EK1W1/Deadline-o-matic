@@ -7,8 +7,9 @@ import deadlines
 import asyncio
 import datetime
 import pytz
-import sched, time
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import deadlines as dl
+from sql_interface import q_deadlines
 
 from deadline_cog import DeadlineCog
 
@@ -26,7 +27,7 @@ intents.presences = False
 
 bot = commands.Bot(intents=intents, command_prefix=".", application_id="1026458152817918012")
 
-s = sched.scheduler(time.time, time.sleep)
+bot = commands.Bot(intents=intents, command_prefix=".")
 
 @bot.event
 async def on_ready(started_announcements=False):
@@ -34,7 +35,6 @@ async def on_ready(started_announcements=False):
     
     await bot.add_cog(DeadlineCog(bot), guilds=[discord.Object(id=597140025582419976)])
     print(f'We have logged in as {bot.user}')
-    print("")
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
 
     if ANNOUNCE_CHANNEL is None:
@@ -45,25 +45,29 @@ async def on_ready(started_announcements=False):
         print("announcements already stated, must have reconnected")
         return
 
-    async def send_announcement(deadline: dl.Deadline, channel, for_time: datetime.datetime):
+    async def send_announcement_start(deadline: dl.Deadline, channel, for_time: datetime.datetime):
+        embed = deadline.format_for_embed()
+        await channel.send(deadline.name + " starts " + dl.dt(for_time, "t"), embed=embed)
+        
+    async def send_announcement_due(deadline: dl.Deadline, channel, for_time: datetime.datetime):
         embed = deadline.format_for_embed()
         await channel.send(deadline.name + " is due " + dl.dt(for_time, "t"), embed=embed)
 
-    # run all the announcements
-    for deadline in deadlines.get_deadlines():
-        for announce_time_start in deadline.calculate_announce_before_start():
-            if announce_time_start < deadline.timezone.localize(datetime.datetime.utcnow()):
-                continue
-            s.enterabs(announce_time_start.timestamp(), 1, send_announcement, (deadline, ANNOUNCE_CHANNEL, deadline.start_datetime))
-            print(deadline.name + " scheduled for announece before start at " + str(announce_time_start))
-        for announce_time_due in deadline.calculate_announce_before_due():
-            if announce_time_due < deadline.timezone.localize(datetime.datetime.utcnow()):
-                continue
-            s.enterabs(announce_time_due.timestamp(), 1, send_announcement, (deadline, ANNOUNCE_CHANNEL, deadline.due_datetime))
-            print(deadline.name + " scheduled for announece before due at " + str(announce_time_due))
-    started_announcements = True
-    s.run()
+    scheduler = AsyncIOScheduler()
 
+    # run all the announcements
+    for deadline in q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()"):
+        for x in deadline.calculate_announce_before_start():
+            if x > deadline.timezone.localize(datetime.datetime.utcnow()):
+                scheduler.add_job(send_announcement_start, 'date', run_date=x, args=(deadline, bot.get_channel(int(ANNOUNCE_CHANNEL)), x))
+
+        for x in deadline.calculate_announce_before_due():
+            if x > deadline.timezone.localize(datetime.datetime.utcnow()):
+                scheduler.add_job(send_announcement_due, 'date', run_date=x, args=(deadline, bot.get_channel(int(ANNOUNCE_CHANNEL)), x))
+            
+
+    scheduler.start()
+    started_announcements = True
 
 
 bot.run(TOKEN)
