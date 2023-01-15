@@ -16,12 +16,12 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @commands.command()
     async def sync(self, ctx) -> None:
         await ctx.send(f'syncing')
-        fmt = await ctx.bot.tree.sync(guild=ctx.guild)
+        fmt = await ctx.bot.tree.sync()
 
         await ctx.send(f'Synced {len(fmt)} commands.')
 
-    @app_commands.command(name="all", description="display all the deadlines")
-    async def all(self, interaction: discord.Interaction) -> None:
+    @app_commands.command(name="all")
+    async def all_slash(self, interaction: discord.Interaction) -> None:
         """displays all the deadlines"""
         deadlines = q_deadlines("SELECT * FROM deadlines")
         if len(deadlines) == 0:
@@ -29,8 +29,8 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             return
         await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
 
-    @app_commands.command()
-    async def past(self, interaction: discord.Interaction):
+    @app_commands.command(name="past")
+    async def past_slash(self, interaction: discord.Interaction):
         """displays past deadlines"""
         deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_DATE()")
         if len(deadlines) == 0:
@@ -38,8 +38,8 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             return
         await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines"))
 
-    @app_commands.command()
-    async def upcoming(self, interaction: discord.Interaction):
+    @app_commands.command(name="upcoming")
+    async def upcoming_slash(self, interaction: discord.Interaction):
         """display upcoming deadlines"""
         deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")[:8]
         if len(deadlines) == 0:
@@ -47,8 +47,8 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             return
         await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "Upcoming Deadlines"))
 
-    @app_commands.command()
-    async def thisweek(self, interaction: discord.Interaction):
+    @app_commands.command(name="thisweek")
+    async def thisweek_slash(self, interaction: discord.Interaction):
         """displays all the deadlines this week"""
         deadlines = q_deadlines("SELECT * FROM deadlines WHERE YEARWEEK(due, 1) = YEARWEEK(CURDATE(), 1)")
         if len(deadlines) == 0:
@@ -56,8 +56,8 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             return
         await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "Deadlines This Week"))
 
-    @app_commands.command()
-    async def next(self, interaction: discord.Interaction):
+    @app_commands.command(name="next")
+    async def next_slash(self, interaction: discord.Interaction):
         """displays next deadline"""
         deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")
         if len(deadlines) == 0:
@@ -65,8 +65,8 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             return
         await interaction.response.send_message(embed=deadlines[0].format_for_embed())
 
-    @app_commands.command()
-    async def all_debug(self, interaction: discord.Interaction):
+    @app_commands.command(name="all_debug")
+    async def all_debug_slash(self, interaction: discord.Interaction):
         """displays all the deadlines and their sotred values for debugging"""
         deadlines = q_deadlines("SELECT * FROM deadlines")
         if len(deadlines) == 0:
@@ -74,8 +74,8 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             return
         await interaction.response.send_message(dl.format_all_deadlines_to_string(deadlines))
 
-    @app_commands.command()
-    async def info(self, interation: discord.Interaction, searchterm: str):
+    @app_commands.command(name="info")
+    async def info_slash(self, interation: discord.Interaction, searchterm: str):
         """display more info for a deadline, use .info next to see the next deadline"""
         if searchterm == ("next",):
             deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")
@@ -113,3 +113,64 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, roo
         best_match = dl.get_best_match(deadlines, name)
         query("DELETE FROM deadlines WHERE name=%s AND subject=%s", (best_match.name, best_match.subject))
         await intertaction.response.send_message("removed")
+    
+
+    @commands.command()
+    async def all(self, ctx) -> None:
+        """displays all the deadlines"""
+        await ctx.send("please use `/all` as . commands will be depricated soon")
+        deadlines = q_deadlines("SELECT * FROM deadlines")
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
+
+    @commands.command()
+    async def past(self, ctx):
+        """displays past deadlines"""
+        await ctx.send("please use `/past` as . commands will be depricated soon")
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_DATE()")
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines"))
+
+    @commands.command()
+    async def upcoming(self, ctx):
+        """display upcoming deadlines"""
+        await ctx.send("please use `/upcoming` as . commands will be depricated soon")
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")[:8]
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Upcoming Deadlines"))
+
+    @commands.command()
+    async def thisweek(self, ctx):
+        """displays all the deadlines this week"""
+        await ctx.send("please use `/thisweek` as . commands will be depricated soon")
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE YEARWEEK(due, 1) = YEARWEEK(CURDATE(), 1)")
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
+        await ctx.send(embed=dl.format_deadlines_for_embed(deadlines, "Deadlines This Week"))
+
+    @commands.command()
+    async def next(self, ctx):
+        """displays next deadline"""
+        await ctx.send("please use `/next` as . commands will be depricated soon")
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
+        await ctx.send(embed=deadlines[0].format_for_embed())
+
+    @commands.command()
+    async def all_debug(self, ctx):
+        """displays all the deadlines and their sotred values for debugging"""
+        await ctx.send("please use `/all_debug` as . commands will be depricated soon")
+        deadlines = q_deadlines("SELECT * FROM deadlines")
+        if len(deadlines) == 0:
+            await ctx.send("no deadlines :)")
+            return
+        await ctx.send(dl.format_all_deadlines_to_string(deadlines))
