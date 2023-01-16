@@ -19,21 +19,24 @@ if not TOKEN:
     raise Exception("No discord token provided")
 
 ANNOUNCE_CHANNEL = os.getenv("ANNOUNCE_CHANNEL")
+APPLICATION_ID = int(os.getenv("APPLICATION_ID"))
 
 intents = discord.Intents.default()
 intents.message_content = True
 intents.typing = False
 intents.presences = False
 
+bot = commands.Bot(intents=intents, command_prefix=".", application_id=APPLICATION_ID)
+
 bot = commands.Bot(intents=intents, command_prefix=".")
 
 @bot.event
 async def on_ready(started_announcements=False):
     """when logged in"""
-
+    
     await bot.add_cog(DeadlineCog(bot))
     print(f'We have logged in as {bot.user}')
-    await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game(".upcoming"))
+    await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game("/upcoming"))
 
     if ANNOUNCE_CHANNEL is None:
         print("no announcement channel, anouncements disabled")
