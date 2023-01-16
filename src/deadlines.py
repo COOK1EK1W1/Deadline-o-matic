@@ -151,7 +151,17 @@ def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```"
 
 
-def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline:
+def get_deadlines() -> list[Deadline]:
+    """read the deadlines from file"""
+    data = query("SELECT * from deadlines")
+    if data is None:
+      return []
+    return [Deadline(x) for x in data]
+
+
+def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline | None:
+    if len(deadlines) == 0:
+        return None 
     results = [[smart_match.similarity(match_string, x.name), x] for x in deadlines]
     results.sort(key=lambda x: x[0], reverse=True)
     return results[0][1]
