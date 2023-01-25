@@ -2,6 +2,7 @@
 import deadlines as dl
 from discord.ext import commands
 import discord
+import announcements
 
 from discord import app_commands
 from sql_interface import query, q_deadlines
@@ -15,7 +16,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
 
     @commands.command()
     async def sync(self, ctx) -> None:
-        await ctx.send(f'syncing')
+        await ctx.send('syncing')
         fmt = await ctx.bot.tree.sync()
 
         await ctx.send(f'Synced {len(fmt)} commands.')
@@ -92,21 +93,22 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             await interation.response.send_message(embed=best_match.format_for_embed())
 
     @app_commands.command()
-    @app_commands.describe(name="The name of the deadline", 
-        course="The course code for the course/subject", 
-        start="The date and time when the deadline begins YYYY/MM/DD HH:MM:SS",
-        due="The date and time when the deadline ends YYYY/MM/DD HH:MM:SS",
-        mark="the maximum amount of mark achievable",
-        room="the name and/or room number where you should be for the deadline",
-        url="a url relating to the deadline",
-        info="any extra information relating to the deadline")
+    @app_commands.describe(name = "The name of the deadline", 
+        course = "The course code for the course/subject", 
+        start = "The date and time when the deadline begins YYYY/MM/DD HH:MM:SS",
+        due = "The date and time when the deadline ends YYYY/MM/DD HH:MM:SS",
+        mark = "the maximum amount of mark achievable",
+        room = "the name and/or room number where you should be for the deadline",
+        url = "a url relating to the deadline",
+        info = "any extra information relating to the deadline")
     @app_commands.check(lambda ctx: ("deadline mod" in [x.name for x in ctx.user.roles]))
-    async def add(self, interaction: discord.Interaction, name: str, course: str, start: str=None, due: str=None, mark: float=0.0, room: str="", url: str="", info: str=""):
+    async def add(self, interaction: discord.Interaction, name: str, course: str, start: str = None, due: str = None, mark: float = 0.0, room: str = "", url: str = "", info: str = ""):
         """add a deadline"""
         query("""INSERT INTO deadlines
 (name, subject, `start`, due, mark, room, url, info)
 VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, room, url, info))
         await interaction.response.send_message("deadline added")
+        await announcements.update_announcement_scheduler(self.bot)
 
     @app_commands.command()
     @app_commands.check(lambda ctx: ("deadline mod" in [x.name for x in ctx.user.roles]))
@@ -115,6 +117,7 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, roo
         best_match = dl.get_best_match(deadlines, name)
         query("DELETE FROM deadlines WHERE name=%s AND subject=%s", (best_match.name, best_match.subject))
         await intertaction.response.send_message("removed")
+        await announcements.update_announcement_scheduler(bot)
     
 
     @commands.command()
