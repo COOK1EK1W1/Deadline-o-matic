@@ -33,7 +33,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="past")
     async def past_slash(self, interaction: discord.Interaction):
         """displays past deadlines"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_DATE()")
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_DATE() ORDER BY due")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
