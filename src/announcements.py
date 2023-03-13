@@ -6,12 +6,12 @@ from sql_interface import q_deadlines
 
 async def send_announcement_start(deadline: dl.Deadline, channel, for_time: datetime.datetime):
     embed = deadline.format_for_embed()
-    await channel.send(deadline.name + " starts " + dl.dt(deadline.start_datetime, "t"), embed=embed)
+    await channel.send(deadline.name + " starts " + dl.dt(deadline.start_datetime, "R"), embed=embed)
 
     
 async def send_announcement_due(deadline: dl.Deadline, channel, for_time: datetime.datetime):
     embed = deadline.format_for_embed()
-    await channel.send(deadline.name + " is due " + dl.dt(deadline.due_datetime, "t"), embed=embed)
+    await channel.send(deadline.name + " is due " + dl.dt(deadline.due_datetime, "R"), embed=embed)
 
 
 async def update_announcement_scheduler(bot):
