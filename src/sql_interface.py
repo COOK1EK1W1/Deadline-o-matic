@@ -1,4 +1,4 @@
-import mysql.connector
+import psycopg2
 import os
 
 import deadlines as dl
@@ -14,13 +14,13 @@ if not (HOST and USER and PASS and NAME):
 
 
 def query(query, params=()):
-    with mysql.connector.connect(
+    with psycopg2.connect(
         host=HOST,
         user=USER,
         password=PASS,
         database=NAME
     ) as connection:
-        cursor = connection.cursor(prepared=True)
+        cursor = connection.cursor()
         cursor.execute(query, params)
         result = cursor.fetchall()
         connection.commit()
@@ -28,13 +28,13 @@ def query(query, params=()):
 
 
 def q_deadlines(query, params=()):
-    with mysql.connector.connect(
+    with psycopg2.connect(
         host=HOST,
         user=USER,
         password=PASS,
         database=NAME
     ) as connection:
-        cursor = connection.cursor(prepared=True)
+        cursor = connection.cursor()
         cursor.execute(query, params)
         result = cursor.fetchall()
         connection.commit()

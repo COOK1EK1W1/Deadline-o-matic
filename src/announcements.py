@@ -19,7 +19,7 @@ async def update_announcement_scheduler(bot):
         return
     bot.scheduler.remove_all_jobs()
     # run all the announcements
-    for deadline in q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()"):
+    for deadline in q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP"):
         for x in deadline.calculate_announce_before_start():
             if x > deadline.timezone.localize(datetime.datetime.utcnow()):
                 uid = random.randint(0, 10000000)

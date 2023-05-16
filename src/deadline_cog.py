@@ -33,7 +33,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="past")
     async def past_slash(self, interaction: discord.Interaction):
         """displays past deadlines"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_DATE() ORDER BY due")
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_TIMESTAMP ORDER BY due")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -42,7 +42,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="upcoming")
     async def upcoming_slash(self, interaction: discord.Interaction):
         """display upcoming deadlines"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE() ORDER BY due")[:8]
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP ORDER BY due")[:8]
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -60,7 +60,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="next")
     async def next_slash(self, interaction: discord.Interaction):
         """displays next deadline"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE() ORDER BY due")
+        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP ORDER BY due")
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -79,7 +79,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def info_slash(self, interation: discord.Interaction, searchterm: str):
         """display more info for a deadline, use .info next to see the next deadline"""
         if searchterm == ("next",):
-            deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_DATE()")
+            deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP")
             if len(deadlines) == 0:
                 await interation.response.send_message("no deadlines :)")
             else:
@@ -93,14 +93,14 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
             await interation.response.send_message(embed=best_match.format_for_embed())
 
     @app_commands.command()
-    @app_commands.describe(name = "The name of the deadline", 
-        course = "The course code for the course/subject", 
-        start = "The date and time when the deadline begins YYYY/MM/DD HH:MM:SS",
-        due = "The date and time when the deadline ends YYYY/MM/DD HH:MM:SS",
-        mark = "the maximum amount of mark achievable",
-        room = "the name and/or room number where you should be for the deadline",
-        url = "a url relating to the deadline",
-        info = "any extra information relating to the deadline")
+    @app_commands.describe(name="The name of the deadline",
+                           course="The course code for the course/subject",
+                           start="The date and time when the deadline begins YYYY/MM/DD HH:MM:SS",
+                           due="The date and time when the deadline ends YYYY/MM/DD HH:MM:SS",
+                           mark="the maximum amount of mark achievable",
+                           room="the name and/or room number where you should be for the deadline",
+                           url="a url relating to the deadline",
+                           info="any extra information relating to the deadline")
     @app_commands.check(lambda ctx: ("deadline mod" in [x.name for x in ctx.user.roles]))
     async def add(self, interaction: discord.Interaction, name: str, course: str, start: str = None, due: str = None, mark: float = 0.0, room: str = "", url: str = "", info: str = ""):
         """add a deadline"""
@@ -117,4 +117,4 @@ VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, roo
         best_match = dl.get_best_match(deadlines, name)
         query("DELETE FROM deadlines WHERE name=%s AND subject=%s", (best_match.name, best_match.subject))
         await intertaction.response.send_message("removed")
-        await announcements.update_announcement_scheduler(bot)
+        await announcements.update_announcement_scheduler(self.bot)

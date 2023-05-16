@@ -16,10 +16,10 @@ idna==3.4
 iniconfig==1.1.1
 mccabe==0.7.0
 multidict==6.0.3
-mysql-connector-python==8.0.31
 packaging==22.0
 pluggy==1.0.0
 protobuf==3.20.1
+psycopg2-binary==2.9.6
 pycodestyle==2.10.0
 pycparser==2.21
 pyflakes==3.0.1
