@@ -8,7 +8,12 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from deadline_cog import DeadlineCog
 from announcements import update_announcement_scheduler
 
+from dotenv import load_dotenv
+
 # environment variables
+
+load_dotenv()
+
 TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN:
     raise Exception("No discord token provided")

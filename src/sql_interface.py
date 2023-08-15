@@ -1,8 +1,10 @@
 import psycopg2
 import os
+from dotenv import load_dotenv
 
 import deadlines as dl
 
+load_dotenv()
 
 HOST = os.getenv("DB_HOST")
 USER = os.getenv("DB_USER")
