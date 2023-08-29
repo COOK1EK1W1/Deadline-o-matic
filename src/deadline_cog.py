@@ -101,7 +101,6 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
                            room="the name and/or room number where you should be for the deadline",
                            url="a url relating to the deadline",
                            info="any extra information relating to the deadline")
-    @app_commands.check(lambda ctx: ("deadline mod" in [x.name for x in ctx.user.roles]))
     async def add(self, interaction: discord.Interaction, name: str, course: str, start: str = None, due: str = None, mark: float = 0.0, room: str = "", url: str = "", info: str = ""):
         """add a deadline"""
         query("""INSERT INTO deadlines
