@@ -104,7 +104,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def add(self, interaction: discord.Interaction, name: str, course: str, start: str = None, due: str = None, mark: float = 0.0, room: str = "", url: str = "", info: str = ""):
         """add a deadline"""
         query("""INSERT INTO deadlines
-(name, subject, `start`, due, mark, room, url, info)
+(name, subject, start, due, mark, room, url, info)
 VALUES(%s, %s, %s, %s, %s, %s, %s, %s) returning name;""", (name, course, start, due, mark, room, url, info))
         await interaction.response.send_message("deadline added")
         await announcements.update_announcement_scheduler(self.bot)
