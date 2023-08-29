@@ -105,15 +105,14 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         """add a deadline"""
         query("""INSERT INTO deadlines
 (name, subject, `start`, due, mark, room, url, info)
-VALUES(%s, %s, %s, %s, %s, %s, %s, %s);""", (name, course, start, due, mark, room, url, info))
+VALUES(%s, %s, %s, %s, %s, %s, %s, %s) returning name;""", (name, course, start, due, mark, room, url, info))
         await interaction.response.send_message("deadline added")
         await announcements.update_announcement_scheduler(self.bot)
 
     @app_commands.command()
-    @app_commands.check(lambda ctx: ("deadline mod" in [x.name for x in ctx.user.roles]))
     async def remove(self, intertaction: discord.Interaction, name: str):
         deadlines = q_deadlines("SELECT * FROM deadlines")
         best_match = dl.get_best_match(deadlines, name)
-        query("DELETE FROM deadlines WHERE name=%s AND subject=%s", (best_match.name, best_match.subject))
+        query("DELETE FROM deadlines WHERE name=%s AND subject=%s returning name", (best_match.name, best_match.subject))
         await intertaction.response.send_message("removed")
         await announcements.update_announcement_scheduler(self.bot)

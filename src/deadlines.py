@@ -13,7 +13,9 @@ class Deadline:
 
         self.start_datetime = localise(data[2], self.timezone)
         self.due_datetime = localise(data[3], self.timezone)
-        self.mark = int(data[4]*100)
+        self.mark = None
+        if data[4]:
+            self.mark = int(data[4]*100)
         self.room = data[5]
         self.url = data[6]
         self.info = data[7]
