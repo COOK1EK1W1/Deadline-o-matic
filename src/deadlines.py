@@ -140,7 +140,7 @@ def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> 
         if deadline.due_in_past():
             strike = "~~"
 
-        colours = {"F28HS": ":computer:", "F28DM": "", "F28DA": ":classical_building:", "F28SD": ":keyboard:"}
+        colours = {"F29FA": ":abacus:", "F29AI": ":brain:", "F29SO": ":classical_building:", "F29DC": ":telephone_reciever:"}
         embed.add_field(name=f"{strike}{colours.get(deadline.subject)} {deadline.name} | {deadline.subject}{strike}", value=date_string + "\n ​", inline=False)  # beware the 0 width space thing used to make empty lines
     return embed
 
