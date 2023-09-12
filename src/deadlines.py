@@ -123,7 +123,7 @@ def dt(datetime: datetime.datetime, type: str):
 def format_deadlines_for_embed(deadlines: list[Deadline], heading: str = "") -> discord.Embed:
     """format deadlines for an embed post in discord"""
 
-    embed = discord.Embed(title=heading, color=0xeb0000)
+    embed = discord.Embed(title=heading, color=0xeb0000, url="https://deadline-web.vercel.app")
     for deadline in deadlines:
         due_date = deadline.due_datetime
         start_date = deadline.start_datetime
