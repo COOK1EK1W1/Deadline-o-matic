@@ -164,6 +164,6 @@ def get_deadlines() -> list[Deadline]:
 def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline | None:
     if len(deadlines) == 0:
         return None 
-    results = [[smart_match.similarity(match_string, x.name), x] for x in deadlines]
+    results = [[smart_match.similarity(match_string, x.name + " | " + x.subject), x] for x in deadlines]
     results.sort(key=lambda x: x[0], reverse=True)
     return results[0][1]
