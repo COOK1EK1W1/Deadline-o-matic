@@ -3,7 +3,7 @@ import datetime
 
 
 def test_init() -> None:
-    d = dl.Deadline(("CW1", "F28PL", datetime.datetime.strptime("2022-11-26 15:30", "%Y-%m-%d %H:%M"), datetime.datetime.strptime("2022-11-27 15:30", "%Y-%m-%d %H:%M"), 0.4, "EM250", "google.com", "lol this is a test"))
+    d = dl.Deadline(("CW1", "F28PL", datetime.datetime.strptime("2022-11-26 15:30", "%Y-%m-%d %H:%M"), datetime.datetime.strptime("2022-11-27 15:30", "%Y-%m-%d %H:%M"), 40, "EM250", "google.com", "lol this is a test"))
     assert d.name == "CW1"
     assert d.subject == "F28PL"
     assert int(d.start_datetime.timestamp()) == 1669476600
