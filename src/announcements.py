@@ -1,17 +1,17 @@
-import deadlines as dl
 import datetime
 import random
-from sql_interface import q_deadlines
+import deadlines as dl
+from sql_interface import many_deadlines
 
 
 async def send_announcement_start(deadline: dl.Deadline, channel, for_time: datetime.datetime):
     embed = deadline.format_for_embed()
-    await channel.send(deadline.name + " starts " + dl.dt(deadline.start_datetime, "R"), embed=embed)
+    await channel.send(deadline.name + " starts " + dl.dt(deadline.start, "R"), embed=embed)
 
     
 async def send_announcement_due(deadline: dl.Deadline, channel, for_time: datetime.datetime):
     embed = deadline.format_for_embed()
-    await channel.send(deadline.name + " is due " + dl.dt(deadline.due_datetime, "R"), embed=embed)
+    await channel.send(deadline.name + " is due " + dl.dt(deadline.due, "R"), embed=embed)
 
 
 async def update_announcement_scheduler(bot):
@@ -19,7 +19,13 @@ async def update_announcement_scheduler(bot):
         return
     bot.scheduler.remove_all_jobs()
     # run all the announcements
-    for deadline in q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP"):
+    deadlines = await many_deadlines(where={
+        'due': {
+            'gt': datetime.datetime.now()
+        }
+      })
+
+    for deadline in [dl.Deadline(x) for x in deadlines]:
         for x in deadline.calculate_announce_before_start():
             if x > deadline.timezone.localize(datetime.datetime.utcnow()):
                 uid = random.randint(0, 10000000)

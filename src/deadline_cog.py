@@ -3,9 +3,11 @@ import deadlines as dl
 from discord.ext import commands
 import discord
 import announcements
+import datetime
 
 from discord import app_commands
-from sql_interface import query, q_deadlines
+from sql_interface import many_deadlines
+
 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
@@ -24,16 +26,26 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="all")
     async def all_slash(self, interaction: discord.Interaction) -> None:
         """displays all the deadlines"""
-        deadlines = q_deadlines("SELECT * FROM deadlines")
+        deadlines = await many_deadlines()
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
-        await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
+        else:
+            await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
 
     @app_commands.command(name="past")
     async def past_slash(self, interaction: discord.Interaction):
         """displays past deadlines"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due < CURRENT_TIMESTAMP ORDER BY due")
+        deadlines = await many_deadlines(
+            where={
+                'due': {
+                    'lt': datetime.datetime.now()
+                }
+            },
+            order={
+                'due': 'asc'
+            }
+        )
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -42,7 +54,17 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="upcoming")
     async def upcoming_slash(self, interaction: discord.Interaction):
         """display upcoming deadlines"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP ORDER BY due")[:8]
+        deadlines = await many_deadlines(
+            where={
+                'due': {
+                    'gt': datetime.datetime.now()
+                }
+            },
+            order=[
+                {'due': 'asc'}
+            ],
+            take=8
+        )
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return

@@ -1,8 +1,9 @@
 """Deadline discord bot"""
 
+import os
+
 from discord.ext import commands
 import discord
-import os
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from deadline_cog import DeadlineCog

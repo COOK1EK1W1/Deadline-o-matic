@@ -1,0 +1,24 @@
+generator client {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Deadline {
+  name    String
+  subject String
+  start   DateTime?
+  due     DateTime
+  mark    Float?
+  room    String?
+  url     String?
+  info    String?
+  color   Int?
+
+  @@id([name, subject])
+}

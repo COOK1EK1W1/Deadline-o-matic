@@ -6,8 +6,8 @@ def test_init() -> None:
     d = dl.Deadline(("CW1", "F28PL", datetime.datetime.strptime("2022-11-26 15:30", "%Y-%m-%d %H:%M"), datetime.datetime.strptime("2022-11-27 15:30", "%Y-%m-%d %H:%M"), 40, "EM250", "google.com", "lol this is a test"))
     assert d.name == "CW1"
     assert d.subject == "F28PL"
-    assert int(d.start_datetime.timestamp()) == 1669476600
-    assert int(d.due_datetime.timestamp()) == 1669563000
+    assert int(d.start.timestamp()) == 1669476600
+    assert int(d.due.timestamp()) == 1669563000
     assert d.mark == 40
     assert d.room == "EM250"
     assert d.url == "google.com"
@@ -70,8 +70,8 @@ def test_due_in_() -> None:
 
 def test_dt() -> None:
     a = dl.Deadline(("1", "1", None, datetime.datetime.strptime("2022-10-26 15:30", "%Y-%m-%d %H:%M"), 0, "", "", ""))
-    assert dl.dt(a.due_datetime, "f") == "<t:1666794600:f>"
-    assert dl.dt(a.due_datetime, "R") == "<t:1666794600:R>"
+    assert dl.dt(a.due, "f") == "<t:1666794600:f>"
+    assert dl.dt(a.due, "R") == "<t:1666794600:R>"
 
 
 def test_date_exists() -> None:
