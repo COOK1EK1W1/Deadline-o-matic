@@ -6,8 +6,7 @@ import announcements
 import datetime
 
 from discord import app_commands
-from sql_interface import many_deadlines
-
+import sql_interface as sql
 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
@@ -26,17 +25,19 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @app_commands.command(name="all")
     async def all_slash(self, interaction: discord.Interaction) -> None:
         """displays all the deadlines"""
-        deadlines = await many_deadlines()
+        deadlines = await sql.many_deadlines()
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
         else:
-            await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines"))
+            await interaction.response.send_message(
+                embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines")
+            )
 
     @app_commands.command(name="past")
     async def past_slash(self, interaction: discord.Interaction):
         """displays past deadlines"""
-        deadlines = await many_deadlines(
+        deadlines = await sql.many_deadlines(
             where={
                 'due': {
                     'lt': datetime.datetime.now()
@@ -49,12 +50,14 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
-        await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines"))
+        await interaction.response.send_message(
+            embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines")
+        )
 
     @app_commands.command(name="upcoming")
     async def upcoming_slash(self, interaction: discord.Interaction):
         """display upcoming deadlines"""
-        deadlines = await many_deadlines(
+        deadlines = await sql.many_deadlines(
             where={
                 'due': {
                     'gt': datetime.datetime.now()
@@ -68,73 +71,153 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
-        await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "Upcoming Deadlines"))
+        await interaction.response.send_message(
+            embed=dl.format_deadlines_for_embed(deadlines,
+                                                "Upcoming Deadlines"
+                                                )
+        )
 
     @app_commands.command(name="thisweek")
     async def thisweek_slash(self, interaction: discord.Interaction):
         """displays all the deadlines this week"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE YEARWEEK(due, 1) = YEARWEEK(CURDATE(), 1)")
+        deadlines = await sql.many_deadlines(
+            where={
+                'due': {
+                    'gte': datetime.datetime.replace(day=1),
+                    'lte': datetime.datetime.replace(day=7),
+                }
+            },
+        )
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
-        await interaction.response.send_message(embed=dl.format_deadlines_for_embed(deadlines, "Deadlines This Week"))
+        await interaction.response.send_message(
+            embed=dl.format_deadlines_for_embed(deadlines,
+                                                "Deadlines This Week")
+        )
 
     @app_commands.command(name="next")
     async def next_slash(self, interaction: discord.Interaction):
         """displays next deadline"""
-        deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP ORDER BY due")
+        deadlines = await sql.many_deadlines(
+            where={
+                'due': {
+                    'gt': datetime.datetime.now()
+                }
+            },
+            order=[
+                {'due': 'asc'}
+            ],
+            take=1
+        )
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
-        await interaction.response.send_message(embed=deadlines[0].format_for_embed())
+        await interaction.response.send_message(
+            embed=deadlines[0].format_for_embed()
+        )
 
     @app_commands.command(name="all_debug")
     async def all_debug_slash(self, interaction: discord.Interaction):
         """displays all the deadlines and their sotred values for debugging"""
-        deadlines = q_deadlines("SELECT * FROM deadlines")
+        deadlines = await sql.many_deadlines()
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
-        await interaction.response.send_message(dl.format_all_deadlines_to_string(deadlines))
+        await interaction.response.send_message(
+            dl.format_all_deadlines_to_string(deadlines)
+        )
 
     @app_commands.command(name="info")
-    async def info_slash(self, interation: discord.Interaction, searchterm: str):
-        """display more info for a deadline, use .info next to see the next deadline"""
+    async def info_slash(self,
+                         interation: discord.Interaction,
+                         searchterm: str
+                         ):
+        """display more info for a deadline, use .info
+        next to see the next deadline"""
         if searchterm == ("next",):
-            deadlines = q_deadlines("SELECT * FROM deadlines WHERE due > CURRENT_TIMESTAMP")
+            deadlines = await sql.many_deadlines(
+                where={
+                    'due': {
+                        'gt': datetime.datetime.now()
+                    }
+                },
+                order=[
+                    {'due': 'asc'}
+                ],
+                take=1
+            )
             if len(deadlines) == 0:
                 await interation.response.send_message("no deadlines :)")
             else:
-                await interation.response.send_message(embed=deadlines[0].format_for_embed())
+                await interation.response.send_message(
+                    embed=deadlines[0].format_for_embed()
+                )
         else:
-            deadlines = q_deadlines("SELECT * FROM deadlines")
+            deadlines = await sql.many_deadlines()
             best_match = dl.get_best_match(deadlines, searchterm)
             if best_match is None:
                 await interation.response.send_message("no deadlines :)")
                 return
-            await interation.response.send_message(embed=best_match.format_for_embed())
+            await interation.response.send_message(
+                embed=best_match.format_for_embed()
+            )
 
-    @app_commands.command()
-    @app_commands.describe(name="The name of the deadline",
-                           course="The course code for the course/subject",
-                           start="The date and time when the deadline begins YYYY/MM/DD HH:MM:SS",
-                           due="The date and time when the deadline ends YYYY/MM/DD HH:MM:SS",
-                           mark="the maximum amount of mark achievable",
-                           room="the name and/or room number where you should be for the deadline",
-                           url="a url relating to the deadline",
-                           info="any extra information relating to the deadline")
-    async def add(self, interaction: discord.Interaction, name: str, course: str, start: str = None, due: str = None, mark: float = 0.0, room: str = "", url: str = "", info: str = ""):
-        """add a deadline"""
-        query("""INSERT INTO deadlines
-(name, subject, start, due, mark, room, url, info)
-VALUES(%s, %s, %s, %s, %s, %s, %s, %s) returning name;""", (name, course, start, due, mark, room, url, info))
-        await interaction.response.send_message("deadline added")
-        await announcements.update_announcement_scheduler(self.bot)
+    # @app_commands.command()
+    # @app_commands.describe(name="The name of the deadline",
+    #                        course="The course code for the course/subject",
+    #                        start="The date and time when the deadline \
+    #                        begins YYYY/MM/DD HH:MM:SS",
+    #                        due="The date and time when the deadline ends \
+    #                         YYYY/MM/DD HH:MM:SS",
+    #                        mark="the maximum amount of mark achievable",
+    #                        room="the name and/or room number where you \
+    #                         should be for the deadline",
+    #                        url="a url relating to the deadline",
+    #                        info="any extra information relating to the \
+    #                         deadline",
+    #                        color="the colour for the deadline, shown \
+    #                         on the website"
+    #                        )
+    # async def add(self,
+    #               interaction: discord.Interaction,
+    #               name: str,
+    #               course: str,
+    #               due: str,
+    #               start: str = None,
+    #               mark: float = 0.0,
+    #               room: str = "",
+    #               url: str = "",
+    #               info: str = "",
+    #               color: int = 0
+    #               ):
+    #     """add a deadline"""
+    #     start_datetime = datetime.datetime.strptime(start, "%Y/%m/%d %H:%M:%S") if start else None
+    #     await sql.create_deadline(data={
+    #         'name': name,
+    #         'subject': course,
+    #         'start': start_datetime,
+    #         'due': datetime.datetime.strptime(due, "%Y/%m/%d %H:%M:%S"),
+    #         'mark': mark,
+    #         'room': room,
+    #         'url': url,
+    #         'info': info
+    #     })
+    #     await interaction.response.send_message("deadline added")
+    #     await announcements.update_announcement_scheduler(self.bot)
 
-    @app_commands.command()
-    async def remove(self, intertaction: discord.Interaction, name: str):
-        deadlines = q_deadlines("SELECT * FROM deadlines")
-        best_match = dl.get_best_match(deadlines, name)
-        query("DELETE FROM deadlines WHERE name=%s AND subject=%s returning name", (best_match.name, best_match.subject))
-        await intertaction.response.send_message("removed")
-        await announcements.update_announcement_scheduler(self.bot)
+    # @app_commands.command()
+    # async def remove(self,
+    #                  intertaction: discord.Interaction,
+    #                  name: str,
+    #                  subject: str
+    #                  ):
+    #     deadlines = await sql.many_deadlines()
+    #     best_match = dl.get_best_match(deadlines, name)
+    #     await sql.delete_deadline(where={
+    #         'name_subjet': {
+    #             'name': best_match.name,
+    #             'subject': best_match.subject
+    #         }})
+    #     await intertaction.response.send_message("removed")
+    #     await announcements.update_announcement_scheduler(self.bot)
