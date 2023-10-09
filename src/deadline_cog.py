@@ -2,7 +2,6 @@
 import deadlines as dl
 from discord.ext import commands
 import discord
-import announcements
 import datetime
 
 from discord import app_commands

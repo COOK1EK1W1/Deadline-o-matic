@@ -12,7 +12,7 @@ class Deadline:
         self.timezone = pytz.timezone("Europe/London")
 
         self.start = data.start
-        self.due = data.due 
+        self.due = data.due
         self.mark = data.mark
         self.room = data.room
         self.url = data.url
@@ -157,15 +157,6 @@ def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
     for deadline in deadlines:
         deadline_matrix.append(deadline.format_to_list())
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```"
-
-
-def get_deadlines() -> list[Deadline]:
-    """read the deadlines from file"""
-    data = query("SELECT * from deadlines")
-    if data is None:
-      return []
-    return [Deadline(x) for x in data]
-
 
 def get_best_match(deadlines: list[Deadline], match_string: str) -> Deadline | None:
     if len(deadlines) == 0:

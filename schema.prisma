@@ -19,6 +19,5 @@ model Deadline {
   url     String?
   info    String?
   color   Int?
-
-  @@id([name, subject])
+  id      Int       @id @default(autoincrement())
 }
