@@ -25,6 +25,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     async def all_slash(self, interaction: discord.Interaction) -> None:
         """displays all the deadlines"""
         deadlines = await sql.many_deadlines()
+        deadlines.sort(key=lambda x: x.due)
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
