@@ -6,6 +6,17 @@ import datetime
 
 from discord import app_commands
 import sql_interface as sql
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+
+# environment variables
+
+load_dotenv()
+
+API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=API_KEY)
 
 
 class DeadlineCog(commands.Cog, name='Deadlines'):
@@ -20,6 +31,26 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         fmt = await ctx.bot.tree.sync()
 
         await ctx.send(f'Synced {len(fmt)} commands.')
+
+    @commands.command()
+    async def disclaimer(self, ctx) -> None:
+        content = ctx.message.reference.resolved.content
+        response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role":"user",
+                        "content": f"""We are students at Heriot Watt university, the following comment was made purely for comedic purposes, and in no way reflects our thoughts on other people, and the university.
+\"{content}\"
+Please write me a disclaimer saying that this comment was written with the sole purpose of comedy. Make the disclaimer relevant to the comment where possible, if not, write a generic statement. Start off by saying \"disclaimer: \" then write the above comment, followed by the disclaimer". Write me only the disclaimer and no other text."""}
+                ],
+                  temperature=1,
+                    max_tokens=256,
+                      top_p=1,
+                        frequency_penalty=0,
+                          presence_penalty=0
+
+                )
+        await ctx.send(response.choices[0].message.content)
 
     @app_commands.command(name="all")
     async def all_slash(self, interaction: discord.Interaction) -> None:
