@@ -28,7 +28,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
     @commands.command()
     async def sync(self, ctx) -> None:
         await ctx.send('syncing')
-        fmt = await ctx.bot.tree.sync()
+        fmt = await ctx.bot.tree.sync(guild=ctx.guild)
 
         await ctx.send(f'Synced {len(fmt)} commands.')
 
