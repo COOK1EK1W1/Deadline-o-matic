@@ -8,15 +8,33 @@ datasource db {
   url          = env("DATABASE_URL")
 }
 
+model Programme{
+  code  String @id
+  title String
+  courses Course[]
+  year          DateTime
+}
+
+model Course{
+  code          String @id
+  title         String
+  D_emoji       String
+  color         String
+  deadlines     Deadline[]
+  programme     Programme @relation(fields: [programmeCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  programmeCode String
+  info          String
+}
+
 model Deadline {
-  name    String
-  subject String
-  start   DateTime?
-  due     DateTime
-  mark    Float?
-  room    String?
-  url     String?
-  info    String?
-  color   Int?
-  id      Int       @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
+  name       String
+  course     Course @relation(fields: [courseCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  courseCode String
+  start      DateTime?
+  due        DateTime?
+  mark       Float?
+  room       String?
+  url        String?
+  info       String?
 }
