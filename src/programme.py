@@ -17,15 +17,12 @@ class Programme:
     @staticmethod
     def get_from_code(code: str) -> "Programme":
         result = requests.get("https://deadline-web.vercel.app/api/" + code)
-        print(result)
         json = result.json()
         return Programme(json)
 
     @staticmethod
     def get_from_guild(guild_id: int) -> "Programme":
-        print("https://deadline-web.vercel.app/api/d_bound/" + str(guild_id))
         result = requests.get("https://deadline-web.vercel.app/api/d_bound/" + str(guild_id))
-        print(result)
         json = result.json()
         return Programme(json)
 

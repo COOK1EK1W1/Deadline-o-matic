@@ -77,81 +77,56 @@ Please write me a disclaimer saying that this comment was written with the sole 
 
 
     @app_commands.command(name="past")
-    async def past_slash(self, interaction: discord.Interaction):
+    async def past(self, interaction: discord.Interaction):
         """displays past deadlines"""
-        deadlines = await sql.many_deadlines(
-            where={
-                'due': {
-                    'lt': datetime.datetime.now()
-                }
-            },
-            order={
-                'due': 'asc'
-            }
-        )
+        programme = Programme.get_from_guild(interaction.guild_id or 0)
+        deadlines = programme.all_deadlines()
+        deadlines = list(filter(lambda x: ((x.due < x.timezone.localize(datetime.datetime.now())) if x.due else False), deadlines))
+        deadlines.sort(key=lambda x: x.due if x.due else 0)
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
         await interaction.response.send_message(
-            embed=dl.format_deadlines_for_embed(programme, deadlines, "Past Deadlines")
+            embed=dl.format_deadlines_for_embed(programme.id, deadlines, "Past Deadlines")
         )
 
     @app_commands.command(name="upcoming")
-    async def upcoming_slash(self, interaction: discord.Interaction):
+    async def upcoming(self, interaction: discord.Interaction):
         """display upcoming deadlines"""
-        deadlines = await sql.many_deadlines(
-            where={
-                'due': {
-                    'gt': datetime.datetime.now()
-                }
-            },
-            order=[
-                {'due': 'asc'}
-            ],
-            take=8
-        )
+        programme = Programme.get_from_guild(interaction.guild_id or 0)
+        deadlines = programme.all_deadlines()
+        deadlines = list(filter(lambda x: ((x.due > x.timezone.localize(datetime.datetime.now())) if x.due else False), deadlines))
+        deadlines.sort(key=lambda x: x.due if x.due else 0)
+        deadlines = deadlines[:8]
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
         await interaction.response.send_message(
-            embed=dl.format_deadlines_for_embed(deadlines,
-                                                "Upcoming Deadlines"
-                                                )
+            embed=dl.format_deadlines_for_embed(programme.id, deadlines, "Upcoming Deadlines")
         )
 
     @app_commands.command(name="thisweek")
-    async def thisweek_slash(self, interaction: discord.Interaction):
+    async def thisweek(self, interaction: discord.Interaction):
         """displays all the deadlines this week"""
-        deadlines = await sql.many_deadlines(
-            where={
-                'due': {
-                    'gte': datetime.datetime.replace(day=1),
-                    'lte': datetime.datetime.replace(day=7),
-                }
-            },
-        )
+        programme = Programme.get_from_guild(interaction.guild_id or 0)
+        deadlines = programme.all_deadlines()
+        deadlines = list(filter(lambda x: ((x.due > x.timezone.localize(datetime.datetime.now())) if x.due else False), deadlines))
+        deadlines = list(filter(lambda x: ((x.due < x.timezone.localize(datetime.datetime.now()) + datetime.timedelta(weeks=1)) if x.due else False), deadlines))
+        deadlines.sort(key=lambda x: x.due if x.due else 0)
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
         await interaction.response.send_message(
-            embed=dl.format_deadlines_for_embed(deadlines,
-                                                "Deadlines This Week")
-        )
+            embed=dl.format_deadlines_for_embed(programme.id, deadlines, "Deadlines This Week"))
 
     @app_commands.command(name="next")
-    async def next_slash(self, interaction: discord.Interaction):
+    async def next(self, interaction: discord.Interaction):
         """displays next deadline"""
-        deadlines = await sql.many_deadlines(
-            where={
-                'due': {
-                    'gt': datetime.datetime.now()
-                }
-            },
-            order=[
-                {'due': 'asc'}
-            ],
-            take=1
-        )
+        programme = Programme.get_from_guild(interaction.guild_id or 0)
+        deadlines = programme.all_deadlines()
+        deadlines = list(filter(lambda x: ((x.due > x.timezone.localize(datetime.datetime.now())) if x.due else False), deadlines))
+        deadlines.sort(key=lambda x: x.due if x.due else 0)
+        deadlines = deadlines[:1]
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
@@ -171,37 +146,29 @@ Please write me a disclaimer saying that this comment was written with the sole 
         )
 
     @app_commands.command(name="info")
-    async def info_slash(self,
-                         interation: discord.Interaction,
-                         searchterm: str
-                         ):
+    async def info_slash(self, interaction: discord.Interaction, searchterm: str):
         """display more info for a deadline, use .info
         next to see the next deadline"""
-        if searchterm == ("next",):
-            deadlines = await sql.many_deadlines(
-                where={
-                    'due': {
-                        'gt': datetime.datetime.now()
-                    }
-                },
-                order=[
-                    {'due': 'asc'}
-                ],
-                take=1
-            )
+        if searchterm.lower() == "next":
+            programme = Programme.get_from_guild(interaction.guild_id or 0)
+            deadlines = programme.all_deadlines()
+            deadlines = list(filter(lambda x: ((x.due > x.timezone.localize(datetime.datetime.now())) if x.due else False), deadlines))
+            deadlines.sort(key=lambda x: x.due if x.due else 0)
+            deadlines = deadlines[:1]
             if len(deadlines) == 0:
-                await interation.response.send_message("no deadlines :)")
+                await interaction.response.send_message("no deadlines :)")
             else:
-                await interation.response.send_message(
+                await interaction.response.send_message(
                     embed=deadlines[0].format_for_embed()
                 )
         else:
-            deadlines = await sql.many_deadlines()
+            programme = Programme.get_from_guild(interaction.guild_id or 0)
+            deadlines = programme.all_deadlines()
             best_match = dl.get_best_match(deadlines, searchterm)
             if best_match is None:
-                await interation.response.send_message("no deadlines :)")
+                await interaction.response.send_message("no deadlines :)")
                 return
-            await interation.response.send_message(
+            await interaction.response.send_message(
                 embed=best_match.format_for_embed()
             )
 
