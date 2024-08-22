@@ -70,6 +70,12 @@ Please write me a disclaimer saying that this comment was written with the sole 
                 embed=dl.format_deadlines_for_embed(programme.id, deadlines, "All Deadlines")
             )
 
+    @app_commands.command(name="guildid")
+    async def guildid(self, interaction: discord.Interaction) -> None:
+        """get the guild id, for adding to web"""
+        await interaction.response.send_message(interaction.guild_id)
+
+
     @app_commands.command(name="past")
     async def past_slash(self, interaction: discord.Interaction):
         """displays past deadlines"""
