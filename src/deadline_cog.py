@@ -57,7 +57,7 @@ Please write me a disclaimer saying that this comment was written with the sole 
     @app_commands.command(name="all")
     async def all(self, interaction: discord.Interaction, search: str | None = None) -> None:
         """displays all the deadlines"""
-        programme = Programme.get_from_code("CS24-4")
+        programme = Programme.get_from_guild(interaction.guild_id or 0)
         deadlines = programme.all_deadlines()
         if (search):
             deadlines = list(filter(lambda x: (x.course_code == search), deadlines))
