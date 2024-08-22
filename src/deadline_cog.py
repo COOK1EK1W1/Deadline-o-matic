@@ -10,6 +10,8 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
+from programme import Programme
+
 # environment variables
 
 load_dotenv()
@@ -53,19 +55,19 @@ Please write me a disclaimer saying that this comment was written with the sole 
         await ctx.send(response.choices[0].message.content)
 
     @app_commands.command(name="all")
-    async def all_slash(self, interaction: discord.Interaction, search: str|None = None) -> None:
+    async def all(self, interaction: discord.Interaction, search: str | None = None) -> None:
         """displays all the deadlines"""
-        deadlines = await sql.many_deadlines()
-        print(deadlines)
+        programme = Programme.get_from_code("CS24-4")
+        deadlines = programme.all_deadlines()
         if (search):
-            deadlines = list(filter(lambda x: (x.subject == search), deadlines))
-        deadlines.sort(key=lambda x: x.due)
+            deadlines = list(filter(lambda x: (x.course_code == search), deadlines))
+        deadlines.sort(key=lambda x: x.due if x.due else 0)
         if len(deadlines) == 0:
             await interaction.response.send_message("no deadlines :)")
             return
         else:
             await interaction.response.send_message(
-                embed=dl.format_deadlines_for_embed(deadlines, "All Deadlines")
+                embed=dl.format_deadlines_for_embed(programme.id, deadlines, "All Deadlines")
             )
 
     @app_commands.command(name="past")
@@ -85,7 +87,7 @@ Please write me a disclaimer saying that this comment was written with the sole 
             await interaction.response.send_message("no deadlines :)")
             return
         await interaction.response.send_message(
-            embed=dl.format_deadlines_for_embed(deadlines, "Past Deadlines")
+            embed=dl.format_deadlines_for_embed(programme, deadlines, "Past Deadlines")
         )
 
     @app_commands.command(name="upcoming")
