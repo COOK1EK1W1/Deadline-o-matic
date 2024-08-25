@@ -15,10 +15,13 @@ class Programme:
         return f"{self.id} | {self.title} | {len(self.courses)} courses"
 
     @staticmethod
-    def get_from_code(code: str) -> "Programme":
+    def get_from_code(code: str) -> "Programme | None":
         result = requests.get("https://deadline-web.vercel.app/api/" + code)
         json = result.json()
-        return Programme(json)
+        try:
+            return Programme(json)
+        except Exception:
+            return None
 
     @staticmethod
     def get_from_guild(guild_id: int) -> "Programme":
@@ -42,6 +45,7 @@ class Course:
         self.color: str = data["color"]
         self.deadlines = [Deadline(self, x) for x in data["deadlines"]]
         self.course_info: str = data["courseInfo"]
+        self.D_announce_channel: str | None = data["D_announce_channel"]
 
 
 class Deadline:
@@ -54,12 +58,11 @@ class Deadline:
         self.timezone = pytz.timezone("Europe/London")
 
         if data["start"] is not None:
-            self.start: datetime.datetime | None = self.timezone.localize(datetime.datetime.strptime(data["start"], "%Y-%m-%dT%H:%M:%S.%fZ"))
-            self.start.replace(tzinfo=self.timezone)
+            self.start: datetime.datetime | None = datetime.datetime.strptime(data["start"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.utc)
         else:
             self.start = None
         if data["due"] is not None:
-            self.due: datetime.datetime | None = self.timezone.localize(datetime.datetime.strptime(data["due"], "%Y-%m-%dT%H:%M:%S.%fZ"))
+            self.due: datetime.datetime | None = datetime.datetime.strptime(data["due"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.utc)
         else:
             self.due = None
         self.mark: float = data["mark"]
@@ -164,6 +167,11 @@ class Deadline:
         """format all the data to a list"""
         return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
 
+
+
+def dt(datetime: datetime.datetime, type: str):
+    """return a discord formatted datetime string. R for relative, F for day and time"""
+    return "<t:" + str(int(datetime.timestamp())) + ":" + type + ">"
 
 
 

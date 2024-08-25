@@ -1,13 +1,14 @@
 """Deadline discord bot"""
 
 import os
+import threading
 
 from discord.ext import commands
 import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from deadline_cog import DeadlineCog
-from announcements import update_announcement_scheduler
+from announcements import run_announcement, run_updater
 
 from dotenv import load_dotenv
 
@@ -40,7 +41,8 @@ async def on_ready():
     print(f'We have logged in as {bot.user}')
     await bot.change_presence(status=discord.Status.online, activity=discord.activity.Game("/upcoming"))
 
-    # await update_announcement_scheduler(bot)
+    run_announcement(bot)
 
+threading.Thread(target=run_updater, args=(bot,)).start()
 
 bot.run(TOKEN)
