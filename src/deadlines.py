@@ -4,12 +4,7 @@ import pytz
 import discord
 import smart_match
 
-from programme import Programme, Deadline
-
-def localise(dt, tz):
-    if dt is None:
-        return None
-    return tz.localize(dt)
+from programme import Deadline
 
 
 def dt(datetime: datetime.datetime, type: str):
@@ -43,7 +38,7 @@ def format_deadlines_for_embed(prog_code: str, deadlines: list[Deadline], headin
 
 def format_all_deadlines_to_string(deadlines: list[Deadline]) -> str:
     """convert all deadlines to a table in ascci format"""
-    deadline_matrix: list[str | float | datetime.timedelta] = []
+    deadline_matrix: list[list[str]] = []
     for deadline in deadlines:
         deadline_matrix.append(deadline.format_to_list())
     return "```" + tabulate(deadline_matrix, headers=["deadline name", "Course", "set on", "due on", "due in"], maxcolwidths=[20, None, None])[:1990] + "```"

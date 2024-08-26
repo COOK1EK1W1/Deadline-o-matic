@@ -1,7 +1,9 @@
 import asyncio
 import time
+from discord.ext import commands
 import datetime
 import random
+
 import deadlines as dl
 from programme import Programme
 
@@ -16,7 +18,7 @@ async def send_announcement_due(deadline: dl.Deadline, channel, for_time: dateti
     await channel.send(deadline.name + " is due " + dl.dt(deadline.due, "R"), embed=embed)
 
 
-def job(bot):
+def job(bot: commands.Bot):
     programmes = ["CS24-4", "AW24", "B21M-PHY"]
     bot.scheduler.remove_all_jobs()
     for programme in programmes:
@@ -39,13 +41,15 @@ def job(bot):
                     uid = random.randint(0, 10000000)
                     bot.scheduler.add_job(send_announcement_due, 'date', id=str(uid), run_date=x, args=(deadline, bot.get_channel(int(deadline.course.D_announce_channel)), x))
 
-def run_updater(bot):
+
+def run_updater(bot: commands.Bot):
     while True:
         time.sleep(10)
         job(bot)
         time.sleep(3590)
 
-def run_announcement(bot):
+
+def run_announcement(bot: commands.Bot):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 

@@ -24,10 +24,13 @@ class Programme:
             return None
 
     @staticmethod
-    def get_from_guild(guild_id: int) -> "Programme":
+    def get_from_guild(guild_id: int) -> "Programme | None":
         result = requests.get("https://deadline-web.vercel.app/api/d_bound/" + str(guild_id))
-        json = result.json()
-        return Programme(json)
+        try:
+            json = result.json()
+            return Programme(json)
+        except Exception:
+            return None
 
     def all_deadlines(self):
         deadlines: list[Deadline] = []
@@ -163,9 +166,9 @@ class Deadline:
         """calculate the remaining time"""
         return self.get_due_date_if_exsits() - pytz.utc.localize(datetime.datetime.utcnow())
 
-    def format_to_list(self):
+    def format_to_list(self) -> list[str]:
         """format all the data to a list"""
-        return [self.name, self.subject, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), self.calculate_remaining_time()]
+        return [self.name, self.course.title, self.get_start_date_if_exsits().strftime("%d %b %H:%M"), self.get_due_date_if_exsits().strftime("%d %b %H:%M"), str(self.calculate_remaining_time())]
 
 
 
