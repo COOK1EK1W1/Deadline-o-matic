@@ -19,7 +19,7 @@ async def send_announcement_due(deadline: dl.Deadline, channel, for_time: dateti
 
 
 def job(bot: commands.Bot):
-    programmes = ["CS24-4", "AW24", "B21M-PHY"]
+    programmes = ["CS24-4", "AW24", "B21M-PHY", "CS24-3"]
     bot.scheduler.remove_all_jobs()
     for programme in programmes:
         programme = Programme.get_from_code(programme)
