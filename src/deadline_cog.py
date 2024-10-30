@@ -39,7 +39,7 @@ class DeadlineCog(commands.Cog, name='Deadlines'):
         if ref is None:
             return
         res = ref.resolved
-        if res is None or res is not Message:
+        if res is None:
             return
         content = res.content
         response = client.chat.completions.create(
